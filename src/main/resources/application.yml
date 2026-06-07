@@ -1,0 +1,49 @@
+# ============================================================================
+# Nyxora ERP — configuración base (WebFlux + R2DBC reactivo)
+# ============================================================================
+server:
+  port: ${SERVER_PORT:8081}   # 8081 para no chocar con otra app en 8080
+
+spring:
+  application:
+    name: nyxora_erp
+
+  # Acceso a datos REACTIVO (runtime de la app)
+  r2dbc:
+    url: ${R2DBC_URL:r2dbc:postgresql://localhost:5433/nyxora_erp}
+    username: ${DB_USER:nyxora}
+    password: ${DB_PASSWORD:nyxora}
+    pool:
+      enabled: true
+      initial-size: 5
+      max-size: 20
+
+  # Flyway corre sobre JDBC (bloqueante) SOLO al arrancar, para migrar el esquema.
+  flyway:
+    enabled: true
+    url: ${JDBC_URL:jdbc:postgresql://localhost:5433/nyxora_erp}
+    user: ${DB_USER:nyxora}
+    password: ${DB_PASSWORD:nyxora}
+    locations: classpath:db/migration
+    schemas: public
+    baseline-on-migrate: false
+    validate-on-migrate: true
+
+# Swagger / OpenAPI
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+
+# Seguridad JWT (secreto por env en producción)
+app:
+  jwt:
+    secret: ${JWT_SECRET:nyxora-dev-secret-cambiar-en-produccion-min-32-bytes-0123456789}
+    access-exp-min: ${JWT_ACCESS_EXP_MIN:60}
+    refresh-exp-days: ${JWT_REFRESH_EXP_DAYS:7}
+  seed-demo: ${APP_SEED_DEMO:true}   # crea empresa + usuario admin demo al arrancar (dev)
+
+# Documentación viva: http://localhost:8081/swagger-ui.html

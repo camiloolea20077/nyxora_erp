@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: nyxora-postgres
+    environment:
+      POSTGRES_DB: nyxora_erp
+      POSTGRES_USER: nyxora
+      POSTGRES_PASSWORD: nyxora
+    ports:
+      - "5433:5432"   # 5433 en host para no chocar con el Postgres de referencia (5432)
+    volumes:
+      - nyxora_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nyxora -d nyxora_erp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  nyxora_pgdata:

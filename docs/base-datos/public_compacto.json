@@ -1,0 +1,1563 @@
+{
+"  SELECT c.table_name,\r\n         string_agg(c.column_name || ' ' || c.data_type ||\r\n           coalesce('(' || c.character_maximum_length || ')',''), ', '\r\n           ORDER BY c.ordinal_position) AS columnas\r\n  FROM information_schema.columns c\r\n  JOIN information_schema.tables t\r\n    ON t.table_schema=c.table_schema AND t.table_name=c.table_name AND t.table_type='BASE TABLE'\r\n  WHERE c.table_schema='public'\r\n  GROUP BY c.table_name\r\n  ORDER BY c.table_name": [
+	{
+		"table_name" : "aca_asignaturas",
+		"columnas" : "id bigint, codigo character varying(20), nombre character varying(191), activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, descripcion text, com_centro_costo_departamento_id integer"
+	},
+	{
+		"table_name" : "aca_asignaturas_programas",
+		"columnas" : "id bigint, aca_asignatura_id integer, aca_programa_academico_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, intensidad_horaria integer, creditos integer, semestres_id integer"
+	},
+	{
+		"table_name" : "aca_cargas_academicas",
+		"columnas" : "id bigint, nom_vinculacion_id integer, thu_nivel_estudio_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tarifa_liquidacion_id smallint, com_acto_administrativo_id integer, numero_acto_administrativo character varying(45), fecha_acto_administrativo date"
+	},
+	{
+		"table_name" : "aca_cargas_academicas_detalles",
+		"columnas" : "id bigint, aca_carga_academica_id integer, aca_asignatura_programa_id integer, fecha_inicio date, fecha_final date, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, hora numeric, hora_liquidada numeric, aca_tipo_docente_catedra_id integer, aca_grupo_academico_id integer, dias_laborados smallint, com_centro_costo_id integer, saldo numeric, com_vigencia_id integer, com_centro_costo_sede_id integer, periodo integer, desplazamiento integer, aumento numeric, disminucion numeric, horas_base numeric, com_centro_costo_departamento_id integer"
+	},
+	{
+		"table_name" : "aca_cargas_academicas_modificaciones",
+		"columnas" : "id integer, com_acto_administrativo_id integer, numero_acto_administrativo character varying(45), fecha_acto_administrativo date, aca_carga_academica_detalle_id integer, operacion_id integer, cantidad numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "aca_cargas_academicas_novedades",
+		"columnas" : "id integer, aca_carga_academica_id integer, nom_concepto_id integer, com_acto_administrativo_id integer, fecha_acto_administrativo date, valor numeric, saldo numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, numero_acto_administrativo character varying(45)"
+	},
+	{
+		"table_name" : "aca_grupos_academicos",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(150), com_vigencia_id integer, semestre smallint, aca_programa_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint"
+	},
+	{
+		"table_name" : "aca_instituciones_snies",
+		"columnas" : "id integer, codigo_ies smallint, nombre character varying(191), sector_id integer, municipio_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "aca_programas_academicos",
+		"columnas" : "id bigint, nombre character varying(191), tipo_programa_academico_id integer, modalidad_programa_id integer, fecha_registro_academico date, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, codigo character varying(191), com_centro_costo_programa_id integer, descripcion text, registro_academico character varying(191), com_centro_costo_facultad_id integer"
+	},
+	{
+		"table_name" : "aca_tipos_docentes_catedras",
+		"columnas" : "id bigint, nombre character varying(191), modalidad_programa_id integer, tipo_empleado_catedra_id integer, es_planta smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, tipo_programa_id integer"
+	},
+	{
+		"table_name" : "aca_tipos_programas_detalles",
+		"columnas" : "id integer, tipo_programa_id integer, categoria_docente_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "acf_activos_fijos",
+		"columnas" : "id integer, com_producto_id integer, codigo_unspsc character varying(25), codigo_barra character varying(100), imagen json, nombre character varying(150), compuesto smallint, compuesto_de integer, descripcion character varying(500), inv_marca_id integer, unidad_mayor_id integer, numero_serie character varying(100), modelo character varying(250), valor_salvamento numeric, porcentaje_salvamento numeric, estado_activo_fijo integer, inv_bodega_id integer, com_tercero_id integer, numero_factura character varying(40), fecha_factura date, valor_compra numeric, garantia json, metodo_depreciacion integer, tipo_depreciacion integer, valor_depreciacion numeric, deterioro numeric, valor_actual numeric, avaluo numeric, fecha_salida_servicio date, vida_util integer, meses_depreciados integer, dias_depreciados integer, meses_pendientes_depreciacion integer, dias_pendientes_depreciacion integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_encabezado_documento_id integer, tipo_activo integer, centro_costo_id integer, fecha_cambio_estado date, capitalizado numeric"
+	},
+	{
+		"table_name" : "acf_cierres",
+		"columnas" : "id integer, agno integer, mes integer, acf_activo_fijo_id integer, valor_inicial numeric, valor_inicial_valorizacion numeric, valor_inicial_capitalizacion numeric, valor_inicial_depreciacion numeric, valor_inicial_deterioro numeric, valor_mes_valorizacion numeric, valor_mes_capitalizacion numeric, valor_mes_depreciacion numeric, valor_mes_deterioro numeric, valor_final_valorizacion numeric, valor_final_capitalizacion numeric, valor_final_depreciacion numeric, valor_final_deterioro numeric, valor_final numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "acf_detalles_depreciaciones",
+		"columnas" : "id integer, com_encabezado_documento_id integer, acf_activo_fijo_id integer, fecha_aplicacion date, unidades_producidas integer, valor_depreciacion numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, periodo_amortizacion integer, cuota_depreciacion numeric, dias_mantenimiento integer, dias_servicio integer, dias_no_explotado integer, dias_bodega integer"
+	},
+	{
+		"table_name" : "acf_detalles_polizas_seguros",
+		"columnas" : "id integer, com_encabezado_documento_id integer, seguros_amparos_id integer, fecha_inicial date, fecha_final date, valor_asegurado numeric, descripcion character varying(500), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, duracion_contrato smallint, cantidad_tiempo integer, unidad_tiempo_id integer, porcentaje_valor integer"
+	},
+	{
+		"table_name" : "acf_polizas_seguros",
+		"columnas" : "id integer, acf_activo_fijo_id integer, acf_poliza_seguro_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "acf_responsables_activos_fijos",
+		"columnas" : "id integer, com_tercero_id integer, acf_activo_fijo_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "activations",
+		"columnas" : "id integer, user_id integer, code character varying(191), completed boolean, completed_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "adm_cierres_mes",
+		"columnas" : "id integer, prv_modulo_id integer, com_vigencia_id integer, tipo_cierre_id integer, mes_id integer, dia smallint, mes_abierto smallint, user_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, dia_abierto smallint, tes_caja_id integer, fecha_inicial date, hora_inicial json, hora_final json, fecha_final date, estado smallint"
+	},
+	{
+		"table_name" : "adm_flujos_trabajos",
+		"columnas" : "id integer, nombre character varying(150), com_documento_origen_id integer, usuario_origen_id integer, criterio_origen json, com_documento_destino_id integer, usuario_destino_id integer, criterio_destino json, tiempo_minimo smallint, tiempo_maximo smallint, usuarios_notificados_ids json, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "audits",
+		"columnas" : "id integer, user_type character varying(191), user_id bigint, event character varying(191), auditable_type character varying(191), auditable_id bigint, old_values text, new_values text, url text, ip_address inet, user_agent character varying(191), tags character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "audits_login",
+		"columnas" : "id integer, correo character varying(50), fecha_salida timestamp without time zone, ip character varying(80), navegador text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, token text, user_id integer"
+	},
+	{
+		"table_name" : "caj_detalles_cajas",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_documento_referencia_id integer, com_documento_referencia1_id integer, com_documento_presupuestal_id integer, com_tercero_id integer, com_tercero1_id integer, ctr_contrato_id integer, tes_caja_id integer, tes_cuenta_bancaria_id integer, con_plan_contable_id integer, com_documento_externo_id integer, numero_documento_externo character varying(250), fecha_documento_externo timestamp without time zone, nom_novedad_id integer, descripcion text, subtotal numeric, deduccion_impuesto_valor numeric, total numeric, descuento_porcentaje numeric, descuento_valor numeric, valor_recaudar numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, nom_detalle_liquidacion_id integer"
+	},
+	{
+		"table_name" : "caj_detalles_contabilidad",
+		"columnas" : "id integer, caj_detalle_caja_id integer, caj_detalle_recaudo_id integer, com_encabezado_documento_id integer, con_plan_contable_id integer, com_tercero_id integer, com_centro_costo_id integer, cos_recurso_id integer, com_proyecto_id integer, com_encabezado_documento_referencia_id integer, descripcion character varying(500), valor_base numeric, com_impuesto_deduccion_id integer, porcentaje_impuesto_deduccion numeric, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "caj_detalles_presupuestales",
+		"columnas" : "id integer, caj_detalle_caja_id integer, pre_detalle_presupuestal_id integer, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tipo_rubro integer"
+	},
+	{
+		"table_name" : "caj_detalles_recaudos",
+		"columnas" : "id integer, forma_pago_id integer, com_tercero_id integer, tes_caja_id integer, tes_cuenta_bancaria_id integer, tes_chequera_detalle_id integer, fecha timestamp without time zone, com_encabezado_documento_id integer, tipo_moneda_id integer, unitario_moneda_extranjera numeric, tasa_cambio numeric, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, numero_de_cheque character varying(191), numero_tarjeta character varying(191), com_tercero_banco_id integer"
+	},
+	{
+		"table_name" : "caj_detalles_recibos_caja",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_documento_referencia_id integer, valor_recaudo numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "cir_grupos_quirurgicos",
+		"columnas" : "id integer, codigo character varying(10), nombre character varying(60), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, manual_tarifario_id integer, honorarios_medicos_id integer, honorarios_anestesia_id integer, honorarios_ayudantia_id integer, honorarios_perfusionista_id integer, derechos_salas integer, materiales_cirugia integer, estado smallint"
+	},
+	{
+		"table_name" : "cmp_comparativos_productos",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_producto_variante_id integer, com_encabezado_documento_cotizacion_id integer, inv_detalle_cotizacion_id integer, cantidad numeric, deleted_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone, seleccion boolean, com_producto_id integer"
+	},
+	{
+		"table_name" : "cmp_cuadros_comparativos_detalles",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_producto_variante_id integer, com_encabezado_documento_cotizacion_id integer, inv_detalle_cotizacion_id integer, cantidad numeric, autorizado numeric, com_producto_id integer, deleted_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone, seleccion boolean"
+	},
+	{
+		"table_name" : "cmp_estudios_previos_ponderacion",
+		"columnas" : "id integer, com_encabezado_documento_id integer, tipo_criterio_id integer, criterio text, descripcion_ponderacion text, puntuacion integer, deleted_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "cmp_estudios_previos_riesgos",
+		"columnas" : "id integer, com_encabezado_documento_id integer, tipo_riesgo_id integer, descripcion_riesgo text, consecuencia_riesgo text, asignacion_riesgo integer, valor_riesgo_id integer, control_tratamiento text, deleted_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones",
+		"columnas" : "id integer, com_vigencia_id integer, com_centro_costo_id integer, com_categorias_id integer, valor numeric, valor_vigencia_actual numeric, deleted_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone, ejecucion numeric"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones_detalles",
+		"columnas" : "id integer, created_at timestamp without time zone, updated_at timestamp without time zone, com_encabezado_documento_id integer, com_centro_costo_id integer, com_categorias_id integer, descripcion character varying(200), mes_inicial integer, mes_final integer, cantidad_tiempo integer, unidad_tiempo_id integer, ctr_modalidades_id integer, causales_id integer, tipo_contrato_id integer, pre_fuente_financiamiento_id integer, valor numeric, valor_vigencia_actual numeric, vigencia_futura smallint, estado_vigencia_futura_id integer, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "cmp_requisitos_habilitantes",
+		"columnas" : "id integer, com_encabezado_documento_id integer, requisito_habilitante_id integer, descripcion_requisito text, deleted_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_academusoft_homologaciones",
+		"columnas" : "id integer, tabla_id integer, codigo1 character varying(100), codigo2 character varying(100), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tipo_homologacion_id integer"
+	},
+	{
+		"table_name" : "com_actos_administrativos",
+		"columnas" : "id integer, prv_empresa_id integer, com_vigencia_id integer, tipo_acto_administrativo_id integer, com_documento_id integer, numero integer, prv_modulo_id integer, fecha date, encabezado text, considerando text, resuelve text, cumplase text, causado smallint, anulado smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, valor numeric, agno integer, mes integer"
+	},
+	{
+		"table_name" : "com_adjuntos",
+		"columnas" : "id integer, com_objeto_id integer, com_tipo_adjunto_id integer, adjunto json, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, nombre character varying(150), descripcion character varying(500)"
+	},
+	{
+		"table_name" : "com_apertura_vigencia",
+		"columnas" : "id integer, numero_consecutivo integer, com_vigencia_origen_id integer, com_vigencia_destino_id integer, com_tercero_id integer, estado_proceso_id integer, prv_modulo_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_apertura_vigencia_detalle",
+		"columnas" : "id integer, apertura_vigencia_id integer, nombre_tabla character varying(191), com_tercero_id integer, estado_proceso_id integer, registro_auditoria json, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_aperturas_vigencias",
+		"columnas" : "id integer, numero_consecutivo integer, com_vigencia_origen_id integer, com_vigencia_destino_id integer, com_tercero_id integer, estado_proceso_id integer, prv_modulo_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_aperturas_vigencias_detalles",
+		"columnas" : "id integer, apertura_vigencia_id integer, nombre_tabla character varying(191), com_tercero_id integer, estado_proceso_id integer, registro_auditoria json, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_archivos_planos",
+		"columnas" : "id integer, prv_archivo_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, metadatos json, prv_modulo_id integer, usuario_id integer, proceso_id integer"
+	},
+	{
+		"table_name" : "com_archivos_planos_registros",
+		"columnas" : "id integer, com_archivo_plano_id integer, prv_pestana_id integer, registro json, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_atributos",
+		"columnas" : "id integer, com_producto_id integer, atributo_id integer, valor character varying(100), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint"
+	},
+	{
+		"table_name" : "com_categorias",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(150), tipo_producto_id integer, com_categoria_id integer, izquierda integer, derecha integer, nivel integer, orden_operacion_id integer, metodo_costeo_id integer, valoracion_inventario_id integer, tipo_depreciacion_id integer, pre_plan_presupuestal_id integer, con_cuenta_consumo_inventario_entrada_id integer, con_cuenta_consumo_inventario_salida_id integer, con_cuenta_activo_fijo_depreciacion_id integer, con_cuenta_activo_fijo_costo_id integer, con_cuenta_activo_fijo_valoracion_id integer, con_cuenta_activo_fijo_baja_id integer, con_cuenta_activo_fijo_deterioro_id integer, con_cuenta_activo_fijo_costo_deterioro_id integer, metodo_depreciacion_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, porcentaje_salvamento numeric, con_cuenta_activo_fijo_id integer, con_cuenta_control_activo_fijo_id integer, con_plan_contable_activo_fijo_no_explotado_id integer, con_plan_contable_activo_fijo_depreciacion_no_explotado_id integer, con_plan_contable_activo_fijo_mantenimiento_id integer, con_plan_contable_activo_fijo_depreciacion_mantenimiento_id integer, pre_plan_presupuestal_ingreso_id integer, pre_fuente_financiamiento_id integer, clase_categoria_id integer, con_plan_contable_cuenta_por_cobrar_id integer, con_plan_contable_cuenta_por_pagar_id integer, pre_cpc_id integer, con_plan_contable_activo_fijo_servicio_id bigint"
+	},
+	{
+		"table_name" : "com_categorias_centros_costos",
+		"columnas" : "id integer, com_categoria_id integer, com_centro_costo_id integer, con_plan_contable_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, porcentaje numeric, es_ingreso integer, con_plan_contable_ingresos_id integer, con_plan_contable_gastos_id integer"
+	},
+	{
+		"table_name" : "com_centro_costo_nom_vinculacion",
+		"columnas" : "id integer, nom_vinculacion_id integer, com_centro_costo_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, porcentaje integer"
+	},
+	{
+		"table_name" : "com_centros_costos",
+		"columnas" : "id integer, com_sede_id integer, nombre character varying(150), tipo_atencion_id integer, clase_servicio_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_centro_costo_id integer, izquierda integer, derecha integer, nivel integer, es_observacion smallint, codigo character varying(20), tipo_centro_costo_id integer, com_tercero_id integer, direccion character varying(1999), telefonos json, maneja_plan_financiero smallint, clase_centro_costo_id integer, nom_vinculacion_id integer, unidad_negocio_id bigint"
+	},
+	{
+		"table_name" : "com_centros_costos_modulos",
+		"columnas" : "id integer, com_centro_costo_id bigint, prv_modulo_id bigint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_centros_costos_tipos_actividades",
+		"columnas" : "id integer, com_centro_costo_id integer, com_tipo_actividad_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_columnas_seccion_formularios_dinamicos",
+		"columnas" : "id integer, com_formulario_dinamico_id integer, com_seccion_id integer, numero_columnas smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_correos",
+		"columnas" : "id integer, fecha_envio timestamp without time zone, origen character varying(309), destino character varying(309), asunto character varying(230), contenido text, com_encabezado_documento_id integer, prv_lista_elemento_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_dependencias",
+		"columnas" : "id integer, codigo character varying(40), nombre character varying(191), com_centro_costo_id integer, ubicacion text, telefono json, nom_vinculacion_id integer, latitud character varying(191), longitud character varying(191), com_dependencia_id integer, nivel integer, izquierda integer, derecha integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, nom_proceso_id integer"
+	},
+	{
+		"table_name" : "com_detalles_columnas_seccion_formularios_dinamicos",
+		"columnas" : "id integer, com_columnas_seccion_formulario_id integer, nombre character varying(150), orden smallint, columnas_respuesta smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_detalles_polizas_seguros",
+		"columnas" : "id integer, com_encabezado_poliza_seguro_id integer, seguros_amparos_id integer, fecha_inicial date, fecha_final date, valor_asegurado numeric, descripcion text, deleted_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone, porcentaje_valor integer, dias integer"
+	},
+	{
+		"table_name" : "com_documentos",
+		"columnas" : "id integer, prv_empresa_id integer, prv_maestro_documento_id integer, codigo character varying(20), prefijo character varying(8), nombre character varying(150), contabilidad_manual smallint, imprime_grilla_contable smallint, imprime_grilla_presupuestal smallint, encabezado_pagina character varying(350), pie_pagina character varying(350), activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, fac_resolucion_facturacion_id integer, com_documento_afecta_presupuesto_id integer, com_documento_genera_afecta_no_presupuesto_id integer, asunto character varying(150), contenido text, codigo_ean character varying(191), tipo_impresion_id integer"
+	},
+	{
+		"table_name" : "com_documentos_calidad",
+		"columnas" : "id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_documento_id integer, codigo_formato character varying(10), version character varying(191), fecha date, elaboro integer, aprobo integer, activo integer"
+	},
+	{
+		"table_name" : "com_documentos_consecutivos",
+		"columnas" : "id integer, com_documento_id integer, com_vigencia_id integer, consecutivo_actual integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_documentos_firma",
+		"columnas" : "id integer, com_documento_id integer, com_firma_id integer, cargo character varying(50), activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_tercero_id integer"
+	},
+	{
+		"table_name" : "com_documentos_referencias",
+		"columnas" : "id integer, tipo_referencia smallint, com_documento_id integer, com_documento_referencia_id integer, fecha timestamp without time zone, user_id integer, tipo_comprobante_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, estado_workflow_id bigint, tipo_comprobante_referencia_id integer, referencia_genera integer"
+	},
+	{
+		"table_name" : "com_documentos_reglas",
+		"columnas" : "id integer, com_documento_id integer, tipo_comprobante_id integer, roles_filtro smallint, roles json, usuarios_filtro smallint, usuarios json, monto_filtro smallint, monto_inicial numeric, monto_final numeric, estados_permitidos json, estado_actual integer, deleted_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_edades_cuentas",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(150), tipo_edad_id integer, edad_minima smallint, edad_maxima smallint, tasa_deterioro numeric, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_encabezado_polizas_seguros",
+		"columnas" : "id integer, numero_poliza character varying(191), fecha date, com_tercero_aseguradora_id integer, com_encabezado_documento_contrato_id integer, com_encabezado_poliza_seguro_referencia_id integer, valor numeric, descripcion text, deleted_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"columnas" : "id integer, com_sede_id integer, com_vigencia_id integer, com_documento_id integer, numero_documento integer, prefijo character varying(191), fecha_documento timestamp without time zone, descripcion text, estado smallint, vigencia_presupuestal_id integer, com_centro_costo_id integer, com_sede2_id integer, com_centro_costo2_id integer, com_tercero1_id integer, com_tercero2_id integer, subtotal numeric, iva numeric, total numeric, porcentaje_AIU numeric, valor_AIU numeric, deduccion numeric, valor_pagado numeric, saldo numeric, fecha1 timestamp without time zone, fecha2 timestamp without time zone, duracion integer, fecha_base1 timestamp without time zone, fecha_base2 timestamp without time zone, documento_referencia_id integer, codigo_documento_externo character varying(25), fecha_radicado timestamp without time zone, ctr_contrato_id integer, fecha_confirmacion timestamp without time zone, poblacion integer, valor_capitado numeric, numero_poliza character varying(20), numero_autorizacion integer, lugar_entrega character varying(50), plazo_entrega smallint, inv_bodega1_id integer, inv_bodega2_id integer, copias smallint, generado_automatico smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, prv_empresa_id integer, com_documento_externo_id integer, agno integer, mes integer, fecha_vigencia timestamp without time zone, com_documento_encabezado_referencia_id integer, inv_ubicacion1_id integer, inv_ubicacion2_id integer, atencion_id integer, tipo_usuario_id integer, tes_caja_id integer, numero_contrato character varying(20), tipo_comprobante_id integer, estado_workflow_id integer, descuento_valor numeric, deduccion_valor numeric, numero_documento_externo character varying(25), fecha_documento_externo timestamp without time zone, fecha_vencimiento timestamp without time zone, valor_capitado_usuario numeric, fac_contrato_id integer, descripcion2 text, descripcion3 text, com_tercero3_id integer, tipo_eje_id integer, tipo_programa_id integer, tipo_modalidad_id integer, tipo_casual_id integer, tipo_contrato_id integer, com_proyecto_id integer, usuarios_capitados smallint, cardinal smallint, prv_modulo_id integer, documento_digital json, com_tercero_confirma_id integer, tes_cuenta_bancaria_id integer, fac_ip inet, fac_resolucion_facturacion_id integer, con_plan_contable_id integer, proceso_id integer, respuesta_dian json, adjunto_factura_electronica json, cufe character varying(191), adicion_plan_adquicion smallint, tipo_duracion integer, descripcion4 text, estado_contrato_id integer, metadatos json, simulacion smallint, indemnizacion smallint, deduccion_impuesto_valor numeric, es_prorroga smallint, aplica_destinación_especifica_id bigint, cesantias_al_empleado smallint, numero_radicado character varying(8), edad numeric, genero_id integer, cit_detalles_id integer, es_observacion smallint, causa_externa_id integer, condicion_id integer, tipo_afiliacion_id integer, categoria_id integer, regimen_id integer, his_recursos_fisico_ingreso_id integer, fecha_ingreso timestamp without time zone, com_centro_costo_egreso_id integer, his_recursos_fisico_egreso_id integer, fecha_egreso timestamp without time zone, grupo_atencion_id integer, discapacidad_id integer"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_centros_costos",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_centro_costo_id integer, com_producto_compuesto_id integer, com_producto_variante_id integer, porcentaje numeric, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, cantidad numeric, detalle_referencia_id integer, acf_clase_id integer, valor_base numeric"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_condiciones_pagos",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_tercero_id integer, tipo_pago_id integer, forma_pago_proveedor_id integer, fecha timestamp without time zone, porcentaje numeric, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, condicion_pago_proveedor_id integer, saldo numeric, tes_cuenta_bancaria_id integer, numero_cuotas integer, tipo_moneda_id integer, unitario_moneda_extranjera numeric, tasa_cambio numeric, descripcion text"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_entrega",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_producto_variante_id integer, unidad_mayor_id integer, cantidad numeric, dias integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, fecha timestamp without time zone, municipio_id integer, direccion text, barrio character varying(191), acf_clase_id integer"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_impuestos_deducciones",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_impuestos_deducciones_id integer, porcentaje numeric, valor numeric, valor_causado numeric, valor_saldo numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_documento_referencia_id integer, com_terceros_id integer, base numeric, com_categorias_id integer, activo smallint, con_plan_contable_id integer, generado_manual smallint, traza json"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_productos_calidad",
+		"columnas" : "id integer, com_productos_calidad_id integer, com_encabezado_documento_id integer, observaciones text, cumple smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_referencias",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_encabezado_documento_referencia_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, generado smallint, valor numeric"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_traza_operaciones_especiales",
+		"columnas" : "id integer, com_encabezado_documento_id integer, justificacion text, user_id integer, password character varying(255), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, prv_motivo_operacion_especial_id integer"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_workflow",
+		"columnas" : "id integer, com_encabezado_documento_id integer, descripcion text, estado_workflow_anterior_id integer, estado_workflow_nuevo_id integer, user_id integer, created_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_encuestas",
+		"columnas" : "id integer, codigo character varying(191), tipo_encuesta_id integer, nombre character varying(250), prv_modulo_id integer, slug character varying(255), estado smallint, preguntas json, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_firmas",
+		"columnas" : "id integer, com_tercero_id integer, nombre character varying(191), imagen json, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_formularios",
+		"columnas" : "id integer, tipo_formulario_id integer, codigo character varying(20), nombre character varying(150), descripcion character varying(500), activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, prv_modulo_id integer"
+	},
+	{
+		"table_name" : "com_formularios_categorias",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(150), descripcion character varying(500), activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_formularios_detalles",
+		"columnas" : "id integer, com_formulario_id integer, com_formulario_seccion_id integer, com_formulario_pregunta_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_formularios_dinamicos",
+		"columnas" : "id integer, nombre character varying(150), genero integer, edad_min smallint, edad_max smallint, unidad_tiempo integer, grupo_atencion integer, cargo smallint, obliga_consulta smallint, finalidad_id integer, es_historia_clinica_dinamica smallint, permite_modificacion_fecha_hora smallint, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, condicion_id integer, tipo_formulario_id integer"
+	},
+	{
+		"table_name" : "com_formularios_preguntas",
+		"columnas" : "id integer, codigo character varying(20), pregunta character varying(500), formulario_tipo_pregunta_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, formulario_tipo_id integer"
+	},
+	{
+		"table_name" : "com_formularios_respuestas",
+		"columnas" : "id integer, com_formulario_pregunta_id integer, orden smallint, respuesta character varying(100), respuesta_correcta smallint, calificacion smallint, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_formularios_secciones",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(150), descripcion character varying(500), formulario_tipo_pregunta_id integer, vertical smallint, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, formulario_tipo_id integer"
+	},
+	{
+		"table_name" : "com_importador",
+		"columnas" : "id integer, importador_id integer, com_documento_id integer, comimp_tipo_comprobante_id integer, usuario_id integer, adjunto_id integer, estado_importador_id integer, proceso_validacion_id integer, proceso_procesar_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, es_documento smallint, metadatos json"
+	},
+	{
+		"table_name" : "com_importador_detalles",
+		"columnas" : "id integer, com_importador_id integer, linea_encabezado integer, linea_detalle integer, estado_importador integer, mensaje text, com_encabezado_documento_id integer, registro json, deleted_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_importador_errores",
+		"columnas" : "id integer, fila integer, archivo character varying(200), descripcion text, created_at timestamp without time zone, updated_at timestamp without time zone, com_sede_id integer, com_importador_id integer, modulo_id integer, proceos_id integer, columna character varying(191)"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(150), causacion_id integer, impuesto_tipo_id integer, impuesto_base_id integer, periodicidad_id integer, com_tercero_id integer, con_plan_contable_compra_id integer, con_plan_contable_dev_compra_id integer, con_plan_contable_venta_id integer, con_plan_contable_dev_venta_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, aplica_aiu smallint, retencion_nomina smallint, com_impuesto_id integer"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones_actividad_economicas",
+		"columnas" : "id integer, com_impuesto_deduccion_id integer, actividad_economica_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, tope_minimo numeric, tope_maximo numeric, porcentaje_declarante numeric, porcentaje_nodeclarante numeric, porcentaje_persona_juridica numeric, com_vigencia_id integer"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones_categorias",
+		"columnas" : "id integer, com_impuesto_deduccion_id integer, agno integer, com_categoria_id integer, tope_minimo numeric, tope_maximo numeric, porcentaje_declarante numeric, porcentaje_nodeclarante numeric, porcentaje_persona_juridica numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones_vigencias",
+		"columnas" : "id integer, com_impuesto_deduccion_id integer, agno integer, tope_minimo numeric, porcentaje numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, valor numeric"
+	},
+	{
+		"table_name" : "com_instituciones",
+		"columnas" : "id integer, prv_tipo_institucion_id integer, codigo character varying(25), nombre character varying(250), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_log_archivos",
+		"columnas" : "id integer, identificador character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_modulos_objetos_tipos_actividades",
+		"columnas" : "id integer, prv_modulo_objeto_id integer, com_tipo_actividad_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_objetos_adjuntos",
+		"columnas" : "id integer, prv_objeto_id integer, tipo_adjunto_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_opciones_respuestas_formularios_dinamicos",
+		"columnas" : "id integer, nombre character varying(150), puntaje integer, es_correcta smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_plantillas",
+		"columnas" : "id integer, prv_maestro_documento_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, codigo character varying(25), nombre character varying(100), activo smallint, notificacion_id integer"
+	},
+	{
+		"table_name" : "com_plantillas_secciones",
+		"columnas" : "id integer, com_plantilla_id integer, tipo_seccion_id integer, codigo character varying(50), nombre character varying(150), orden integer, contenido text, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_preguntas_formularios_dinamicos",
+		"columnas" : "id integer, com_seccion_formulario_dinamico_id bigint, numero integer, nombre character varying(150), tipo_pregunta_id integer, genero_id integer, edad_min smallint, edad_max smallint, unidad_tiempo_id integer, rango_min integer, rango_max integer, es_requerido smallint, reporte smallint, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_formulario_dinamico_id bigint, mascara_id integer, aplica_columna smallint, es_condicionada smallint, com_preguntas_formularios_dinamicos_id bigint, com_signo_vital_id bigint, orden integer, valor_condicionada integer, aplica_consulta smallint"
+	},
+	{
+		"table_name" : "com_productos",
+		"columnas" : "id integer, com_categoria_id integer, codigo_unspsc character varying(25), imagen json, nombre character varying(150), compuesto smallint, descripcion character varying(500), inv_marca_id integer, unidad_mayor_id integer, contenido numeric, unidad_menor_id integer, maneja_lote smallint, maneja_desperdicio smallint, discrimina_iva smallint, com_impuesto_deduccion_id integer, stock_minimo numeric, stock_maximo numeric, tiempo_reabastecimiento integer, tarifa_maxima numeric, es_salud smallint, codigo_cups character varying(10), codigo_soat character varying(10), codigo_iss character varying(10), es_pos smallint, nivel_id integer, forma_farmaceutica_id integer, via_administracion_id integer, contraindicacion text, recomendacion text, posologia text, categoria_medicamento_id integer, temperatura_minima numeric, temperatura_maxima numeric, condicion_luz_id integer, edad_minima integer, edad_maxima integer, cantidad_orden_medica numeric, cantidad_orden_diaria numeric, cantidad_orden_mensual numeric, cantidad_liquidacion numeric, cantidad_liquidacion_mensual numeric, cantidad_maxima_liquidacion integer, cantidad_maxima_facturacion integer, programable smallint, finalidad_procedimiento_id integer, finalidad_consulta_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, grupo_marca_id integer, cantidad_liquidacion_diaria numeric, forma_comercializacion_id integer, com_tipo_actividad_salud_id bigint, concentracion_medicamento_id integer, cos_recurso_id integer, aplica_impuesto_bolsa smallint, es_devolutivo smallint, com_tipo_actividad_id bigint, tipo_procedimiento_id integer, finalidad_id integer, genero_id json, especialidad_id bigint, tipo_servicio_id integer, modalidad_id integer, consentimiento_informado text, medicamento_control smallint"
+	},
+	{
+		"table_name" : "com_productos_calidad",
+		"columnas" : "id integer, com_producto_id integer, producto_calidad_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint"
+	},
+	{
+		"table_name" : "com_productos_compuestos",
+		"columnas" : "id integer, com_producto_id integer, com_producto_variante_id integer, cantidad integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_productos_dosis",
+		"columnas" : "id integer, com_producto_variante_id smallint, activo smallint, his_vacunacion_dosis_id integer, via_administracion_id json, edad_min numeric, edad_max numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_productos_esquemas",
+		"columnas" : "id integer, activo smallint, com_producto_variante_id bigint, his_vacunacion_dosis_id bigint, orden integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_productos_proveedores",
+		"columnas" : "id integer, com_producto_id integer, com_tercero_id integer, codigo_producto character varying(20), cantidad_minima numeric, plazo_entrega integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_productos_variantes",
+		"columnas" : "id integer, com_producto_id integer, sku_plu character varying(15), codigo_barra character varying(13), precio_adicional numeric, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, costo numeric, imagen json"
+	},
+	{
+		"table_name" : "com_productos_variantes_atributos",
+		"columnas" : "id integer, com_producto_variante_id integer, com_atributo_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_promocion_mantenimiento",
+		"columnas" : "id integer, activo smallint, com_producto_variante_id integer, edad_min integer, edad_max integer, cantidad integer, unidad_tiempo_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_proyectos",
+		"columnas" : "id integer, codigo character varying(50), nombre character varying(150), descripcion text, programa_id integer, fecha_inicio date, fecha_final date, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_referencias_adjuntos",
+		"columnas" : "id integer, com_objeto_id integer, referencia_id integer, adjunto_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_respuestas",
+		"columnas" : "id integer, com_encuesta_id integer, respuesta json, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_respuestas_formularios_dinamicos",
+		"columnas" : "id integer, pregunta_id integer, nombre text, puntaje integer, es_correcta integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_secciones_formularios_dinamicos",
+		"columnas" : "id integer, orden smallint, numero integer, nombre character varying(150), preguntas_fila smallint, comentarios text, com_formulario_dinamico_id integer, reporte smallint, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, forma_visualizacion smallint"
+	},
+	{
+		"table_name" : "com_sedes",
+		"columnas" : "id integer, es_principal smallint, codigo character varying(191), nombre character varying(191), direccion text, prv_empresa_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, email character varying(191), prv_listas_elemento_id integer, telefono json, municipio_id integer, com_tercero_id integer, celular character varying, respuesta_seguridad character varying, institucion_id integer, zona_id integer"
+	},
+	{
+		"table_name" : "com_sedes_modulos",
+		"columnas" : "id integer, com_sede_id integer, prv_modulo_id integer, user_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_sedes_users",
+		"columnas" : "id integer, com_sede_id integer, user_id integer, fecha_vinculacion timestamp without time zone, fecha_desvinculacion timestamp without time zone, activo smallint, permisos json, created_at timestamp without time zone, updated_at timestamp without time zone, permisos_dinamicos text"
+	},
+	{
+		"table_name" : "com_supervencion_intervencion",
+		"columnas" : "id integer, com_encabezados_documento_id integer, tipo_tercero_id integer, com_tercero_id integer, descripcion text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_terceros",
+		"columnas" : "id integer, tipo_documento_id integer, numero_documento character varying(40), digito_verificacion smallint, razon_social character varying(255), nombre1 character varying(150), nombre2 character varying(150), apellido1 character varying(150), apellido2 character varying(150), nombre_representante_legal character varying(150), genero_id integer, estado_civil_id integer, fecha_nacimiento date, municipio_nacimiento_id integer, barrio_residencia_id integer, rh_id integer, huella bytea, clase_libreta_id integer, distrito_libreta_id integer, numero_libreta character varying(40), tarjeta_profesional character varying(30), pertenencia_etnica_id integer, nivel_educativo_id integer, discapacidades json, capacidades_excepcionales json, exclusion_social json, responsable_activos smallint, resolucion character varying(20), activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, es_empresa smallint, municipio_residencia_id integer, direccion_residencia character varying(1999), telefonos json, sitio_web character varying(80), correos json, nombre_contacto character varying(150), actividad_economica_id integer, tipo_contribuyente_id integer, responsable_iva smallint, es_autoretenedor_iva smallint, condicion_pago_proveedor_id integer, condicion_pago_cliente_id integer, banco_1_id integer, tipo_cuenta_1_id integer, numero_cuenta_1 character varying(50), banco_2_id integer, tipo_cuenta_2_id integer, numero_cuenta_2 character varying(50), con_plan_contable_proveedor_id integer, metadatos json, codigo character varying(20), telefono_contacto json, correo_electronico_contacto json, foto json, declarante smallint, es_autoretenedor_ica smallint, es_autoretenedor_fuente smallint, forma_pago_proveedor_id integer, razon_comercial character varying(150), forma_pago_cliente_id integer, interes_efectivo_mensual numeric, fecha_expedicion_documento date, municipio_expedicion_documento_id integer, fecha_vencimiento_documento date, rut smallint, obligacion_dian json, cos_recurso_id integer, otras_direcciones json, es_reciproco smallint, preinscrito integer, lote integer, hobbies_id json, tipo_evaluador_id smallint, aplica_art_383 smallint, codigo_reciproco character varying(150), sexo_id bigint, orientacion_sexual_id bigint, identidad_genero_id bigint, ocupacion_id bigint, es_cabeza_familia smallint, com_tercero_aseguradora_id bigint, categoria_id bigint, grupo_atencion_id bigint, encuesta_sisben_id bigint, puntaje_sisben numeric, discapacidad_id bigint, grupo_sisben_id bigint, parentesco_id bigint, nombre_padre character varying(150), nombre_madre character varying(150), fac_contrato_id bigint, es_asistencial smallint, especialidad_id json, perfil_asistencial_id json, administrador_sivigila smallint, persona_atiende_id bigint, registro_profesional character varying(50), fac_manual_tarifario_id bigint, cgn_id bigint, documento_representante_legal character varying(40), com_tipo_actividad_otras json, tipo_afiliacion_id integer"
+	},
+	{
+		"table_name" : "com_terceros_contactos",
+		"columnas" : "id integer, com_tercero_id integer, nombre character varying(150), cargo character varying(150), direccion_facturacion text, direccion_envio text, notas character varying(500), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, correo json, telefono_fijo json, telefono_celular json"
+	},
+	{
+		"table_name" : "com_terceros_dispositivos",
+		"columnas" : "id bigint, nombre character varying(100), com_tercero_id bigint, credential_id character varying(500), public_key character varying(2000), transports jsonb, aaguid character varying(50), sign_count bigint, rp_id character varying(255), created_at timestamp with time zone, deleted_at timestamp with time zone"
+	},
+	{
+		"table_name" : "com_terceros_historico_documento_nombre",
+		"columnas" : "id integer, com_tercero_id integer, tipo_documento_anterior_id integer, numero_documento_anterior character varying(20), nombre1_anterior character varying(150), nombre2_anterior character varying(150), apellido1_anterior character varying(150), apellido2_anterior character varying(150), tipo_documento_actual_id integer, numero_documento_actual character varying(20), nombre1_actual character varying(150), nombre2_actual character varying(150), apellido1_actual character varying(150), apellido2_actual character varying(150), motivo_cambio text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, razon_social_actual character varying(191), razon_social_anterior character varying(191)"
+	},
+	{
+		"table_name" : "com_terceros_huellas",
+		"columnas" : "id integer, com_tercero_id integer, huella text, autorizacion text, posicion smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_terceros_por_tipos",
+		"columnas" : "id integer, com_tercero_id integer, tipo_tercero_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint"
+	},
+	{
+		"table_name" : "com_terceros_tipos_actividades",
+		"columnas" : "id bigint, com_tercero_id bigint, com_tipo_actividad_id bigint, realiza smallint, ordena smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_tipos_actividades",
+		"columnas" : "id integer, activo smallint, codigo character varying(40), nombre character varying(120), descripcion character varying(500), prv_tipo_concepto_salud_id integer, tipo_rips_id integer, finalidad_id integer, pyms smallint, vacuna smallint, salud_oral smallint, programable smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, grupo_servicio_id integer"
+	},
+	{
+		"table_name" : "com_tipos_actividades_salud",
+		"columnas" : "id integer, codigo character varying(20), nombre text, descripcion text, es_pms smallint, finalidad_consulta_id integer, finalidad_procedimiento_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "com_vigencias",
+		"columnas" : "id integer, nombre integer, salario_minimo_vigente numeric, unidad_valor_tributario numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, auxilio_transporte numeric, subsidio_alimentacion numeric, tope_maximo_subsidio_alimentacion numeric, tope_maximo_bonificacion numeric, ipc numeric, valor_punto numeric, dtf numeric, valor_estadia numeric, fecha_apertura_concertacion date, hora_apertura_concertacion time without time zone, cerrar_concertacion smallint, fecha_cierre_concertacion date, hora_cierre_concertacion time without time zone, descripcion text"
+	},
+	{
+		"table_name" : "com_vigencias_margenes_retenciones",
+		"columnas" : "id integer, com_vigencia_id integer, uvt_rango_desde integer, uvt_rango_hasta integer, tarifa_marginal numeric, impuesto character varying(500), descripcion text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, uvt_adicional double precision"
+	},
+	{
+		"table_name" : "con_cierres_contables",
+		"columnas" : "id integer, agno integer, mes integer, con_plan_contable_id integer, saldo_debito_anterior numeric, saldo_credito_anterior numeric, debito numeric, credito numeric, saldo_debito_final numeric, saldo_credito_final numeric, saldo_debito_anterior_dolar numeric, saldo_credito_anterior_dolar numeric, debito_dolar numeric, credito_dolar numeric, saldo_debito_final_dolar numeric, saldo_credito_final_dolar numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_conceptos_contables",
+		"columnas" : "id integer, concepto character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_conceptos_estados_financieros_detalles",
+		"columnas" : "id integer, con_concepto_estado_financiero_encabezado_id integer, tipo_cuenta_id integer, con_plan_contable_id integer, tipo_operacion_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_conceptos_estados_financieros_encabezados",
+		"columnas" : "id integer, con_estado_financiero_id integer, concepto_ef_encabezado_id integer, mostrar_revelaciones smallint, nombre character varying(150), tipo_operacion_id integer, izquierda integer, derecha integer, titulo smallint, valor smallint, orden smallint, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tipo_detalle_id integer, taxonomia character varying(250), codigo_snies character varying(191)"
+	},
+	{
+		"table_name" : "con_detalles_contables",
+		"columnas" : "id integer, com_encabezado_documento_id integer, agno integer, mes integer, con_plan_contable_id integer, com_centro_costo_id integer, com_tercero_id integer, pre_proyecto_id integer, cos_recurso_id integer, descripcion text, valor_base numeric, com_impuesto_deduccion_id integer, porcentaje_impuesto_deduccion numeric, valor numeric, valor_trm numeric, valor_dolar numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_encabezado_documento_referencia_id integer, revelacion text, tipo_revelacion integer, estado_financiero integer, com_tercero2_id integer"
+	},
+	{
+		"table_name" : "con_detalles_presupuestales",
+		"columnas" : "id integer, con_detalle_contable_id integer, tipo_rubro integer, pre_detalle_presupuestal_id integer, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_estados_financieros",
+		"columnas" : "id integer, codigo character varying(15), nombre character varying(200), tipo_estado_financiero_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_grupo_informe_detalles",
+		"columnas" : "id integer, grupo_informe_id integer, con_plan_contable_id integer, tipo_operacion_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_informacion_exogena",
+		"columnas" : "id integer, activo smallint, formato_dian_id integer, concepto_dian_id integer, columna_dian_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tipo_ejercicio integer, exceso integer, promedio_meses integer, minimo_uvt integer, columna_id json, tercero smallint"
+	},
+	{
+		"table_name" : "con_informacion_exogena_detalles",
+		"columnas" : "id integer, con_informacion_exogena_id integer, con_plan_contable_id integer, tipo_operacion_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tipo_lista_id integer, lista_id json"
+	},
+	{
+		"table_name" : "con_parametros_cuentas_contables",
+		"columnas" : "id integer, con_concepto_dian_id integer, con_plan_contable_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_plan_contable",
+		"columnas" : "id integer, codigo_cuenta character varying(15), con_plan_contable_id integer, nombre_cuenta character varying(200), nivel integer, izquierda integer, derecha integer, activo smallint, naturaleza_id integer, tipo_cuenta_id integer, maneja_movimiento smallint, maneja_movimiento_manual smallint, maneja_tercero smallint, maneja_centro_costo smallint, maneja_impuesto smallint, maneja_proyecto smallint, maneja_recurso smallint, maneja_saldo_contrario smallint, con_plan_contable_homologacion_id integer, con_plan_contable_traslado_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, maneja_revelaciones smallint, corriente smallint, homologacion_snies_id integer, reciproco integer"
+	},
+	{
+		"table_name" : "con_politicas",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(60), descripcion text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_reclasificaciones_contables",
+		"columnas" : "id integer, tipo_reclasificacion_id integer, fecha_inicial date, fecha_final date, com_encabezado_documento_id integer, tipo_comprobante_id integer, numero_inicial integer, numero_final integer, con_plan_contable_origen_id integer, con_plan_contable_destino_id integer, com_tercero_origen_id integer, com_tercero_destino_id integer, com_centro_costo_origen_id integer, com_centro_costo_destino_id integer, com_proyecto_origen_id integer, com_proyecto_destino_id integer, cos_recurso_origen_id integer, cos_recurso_destino_id integer, fecha_procesamiento date, estado_proceso_id integer, observaciones text, com_encabezado_documento_proceso_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_revelaciones",
+		"columnas" : "id integer, com_encabezado_documento_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_saldos_centros_costos",
+		"columnas" : "id integer, agno integer, mes integer, con_plan_contable_id integer, com_centro_costo_id integer, saldo_debito_anterior numeric, saldo_credito_anterior numeric, debito numeric, credito numeric, saldo_debito_final numeric, saldo_credito_final numeric, saldo_debito_anterior_dolar numeric, saldo_credito_anterior_dolar numeric, debito_dolar numeric, credito_dolar numeric, saldo_debito_final_dolar numeric, saldo_credito_final_dolar numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_saldos_centros_costos_recursos",
+		"columnas" : "id integer, agno integer, mes integer, con_plan_contable_id integer, com_centro_costo_id integer, cos_recurso_id integer, saldo_debito_anterior numeric, saldo_credito_anterior numeric, debito numeric, credito numeric, saldo_debito_final numeric, saldo_credito_final numeric, saldo_debito_anterior_dolar numeric, saldo_credito_anterior_dolar numeric, debito_dolar numeric, credito_dolar numeric, saldo_debito_final_dolar numeric, saldo_credito_final_dolar numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_saldos_recursos",
+		"columnas" : "id integer, agno integer, mes integer, con_plan_contable_id integer, con_recurso_id integer, saldo_debito_anterior numeric, saldo_credito_anterior numeric, debito numeric, credito numeric, saldo_debito_final numeric, saldo_credito_final numeric, saldo_debito_anterior_dolar numeric, saldo_credito_anterior_dolar numeric, debito_dolar numeric, credito_dolar numeric, saldo_debito_final_dolar numeric, saldo_credito_final_dolar numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_saldos_terceros",
+		"columnas" : "id integer, agno integer, mes integer, con_plan_contable_id integer, com_tercero_id integer, saldo_debito_anterior numeric, saldo_credito_anterior numeric, debito numeric, credito numeric, saldo_debito_final numeric, saldo_credito_final numeric, saldo_debito_anterior_dolar numeric, saldo_credito_anterior_dolar numeric, debito_dolar numeric, credito_dolar numeric, saldo_debito_final_dolar numeric, saldo_credito_final_dolar numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_saldos_terceros_documentos",
+		"columnas" : "id integer, agno integer, mes integer, con_plan_contable_id integer, com_tercero_id integer, com_encabezado_documento_referencia_id integer, saldo_debito_anterior numeric, saldo_credito_anterior numeric, debito numeric, credito numeric, saldo_debito_final numeric, saldo_credito_final numeric, saldo_debito_anterior_dolar numeric, saldo_credito_anterior_dolar numeric, debito_dolar numeric, credito_dolar numeric, saldo_debito_final_dolar numeric, saldo_credito_final_dolar numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "con_saldos_terceros_proyectos",
+		"columnas" : "id integer, agno integer, mes integer, con_plan_contable_id integer, com_tercero_id integer, com_proyecto_id integer, saldo_debito_anterior numeric, saldo_credito_anterior numeric, debito numeric, credito numeric, saldo_debito_final numeric, saldo_credito_final numeric, saldo_debito_anterior_dolar numeric, saldo_credito_anterior_dolar numeric, debito_dolar numeric, credito_dolar numeric, saldo_debito_final_dolar numeric, saldo_credito_final_dolar numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "cos_recursos",
+		"columnas" : "id integer, codigo character varying(10), nombre character varying(100), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tipo_recurso_id integer, driver_id integer, costo_adicional smallint, descripcion text, activo smallint"
+	},
+	{
+		"table_name" : "cpc_detalles_acuerdos_pago",
+		"columnas" : "id integer, com_encabezado_documento_id integer, numero_cuota integer, valor numeric, fecha_aplicacion date, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, periodo_id integer"
+	},
+	{
+		"table_name" : "cpc_detalles_cartera",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_encabezado_documento_referencia_id integer, dias integer, saldo numeric, porcentaje numeric, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, con_plan_contable_id integer, valor_interes numeric, valor_total numeric, fecha_ultima_liquidacion date, codigo_oficio integer, numero_oficio integer, fecha_oficio date, vencido_mas_interes numeric"
+	},
+	{
+		"table_name" : "cpc_detalles_contabilidad",
+		"columnas" : "id integer, com_encabezado_documento_id integer, cpc_detalles_cartera_id integer, agno integer, mes integer, con_plan_contable_id integer, com_tercero_id integer, com_centro_costo_id integer, pre_proyecto_id integer, cos_recurso_id integer, com_encabezado_documento_referencia_id integer, descripcion text, valor_base numeric, com_impuesto_deduccion_id integer, porcentaje_impuesto_deduccion numeric, valor numeric, tipo_revelacion integer, revelacion integer, estado_financiero integer, valor_trm numeric, valor_dolar numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "cpc_detalles_presupuesto",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_encabezado_documento_referencia_id integer, cpc_detalles_cartera_id integer, pre_detalle_presupuestal_id integer, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "cpc_referencias_cartera",
+		"columnas" : "id integer, com_encabezado_documento_id integer, fac_tipo_cliente_id integer, com_tercero_id integer, fac_contrato_id integer, com_documento_id integer, tipo_comprobante_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, fecha_corte date"
+	},
+	{
+		"table_name" : "cpp_detalles_contabilidad",
+		"columnas" : "id integer, tes_detalle_cuenta_pagar_id integer, con_plan_contable_id integer, valor numeric, com_tercero_id integer, com_centro_costo_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, pre_proyecto_id integer, com_encabezado_documento_id integer, agno integer, mes integer, cos_recurso_id integer, com_encabezado_documento_referencia_id integer, descripcion text, valor_base numeric, com_impuesto_deduccion_id integer, porcentaje_impuesto_deduccion numeric, tipo_revelacion integer, revelacion integer, estado_financiero integer, valor_trm numeric, valor_dolar numeric"
+	},
+	{
+		"table_name" : "cpp_detalles_deducibles_retefuente",
+		"columnas" : "id integer, com_encabezado_documento_id integer, nom_concepto_id integer, base numeric, limite character varying(25), valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "cpp_detalles_documentos_soportes",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_encabezado_documento_referencia_id integer, com_tercero_id integer, com_producto_variante_id integer, tipo_moneda_id integer, tasa_cambio numeric, unitario_moneda_extranjera numeric, cantidad numeric, unitario numeric, descuento_porcentaje numeric, descuento_valor numeric, subtotal numeric, com_impuesto_deduccion_id integer, deduccion_valor numeric, total numeric, descripcion text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "cpp_detalles_presupuesto",
+		"columnas" : "id integer, tes_detalle_cuenta_pagar_id integer, pre_detalle_presupuestal_id integer, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "cpp_eventos_facturas_dian",
+		"columnas" : "id integer, cpp_factura_dian_id integer, evento_id integer, fecha_evento date, cude_evento character varying(255), concepto_reclamo character varying(255), descripcion_reclamo text, xml_evento text, error_evento character varying(1000), traza text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, estado character varying(50)"
+	},
+	{
+		"table_name" : "cpp_facturas_dian",
+		"columnas" : "id integer, fecha_recepcion date, com_tercero_emisor_id integer, com_tercero_receptor_id integer, fac_firma_digital_receptor_id integer, prv_correo_radian_id integer, valor_factura numeric, pdf_factura text, xml_factura text, cufe character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, email_remitente character varying(191), documento character varying(191)"
+	},
+	{
+		"table_name" : "ctr_contratos",
+		"columnas" : "id integer, activo smallint, nombre character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tipo_contrato_id integer, administradora_id integer, tipo_usuario_id integer"
+	},
+	{
+		"table_name" : "ctr_contratos_detalles",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_plantilla_id integer, texto text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "ctr_documentos_detalles",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_documento_id integer, fecha timestamp without time zone, numero_documento integer, descripcion text, estado_actual_id integer, estado_nuevo_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "ctr_modalidades",
+		"columnas" : "id integer, codigo character varying(50), nombre character varying(150), descripcion text, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "ctr_modalidades_causales",
+		"columnas" : "id integer, ctr_modalidad_id integer, causal_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "ctr_plantillas_clausulas",
+		"columnas" : "id integer, com_plantilla_seccion_id integer, tipo_clausula_id integer, orden character varying(50), numero character varying(50), nombre character varying(150), texto text, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "ctr_tipos_contratos_requisitos_habilitantes",
+		"columnas" : "id integer, tipo_contrato_id integer, tipo_requisito_habilitante_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "dashboard__widgets",
+		"columnas" : "id integer, user_id integer, widgets text, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "databasechangelog",
+		"columnas" : "id character varying(255), author character varying(255), filename character varying(255), dateexecuted timestamp without time zone, orderexecuted integer, exectype character varying(10), md5sum character varying(35), description character varying(255), comments character varying(255), tag character varying(255), liquibase character varying(20), contexts character varying(255), labels character varying(255), deployment_id character varying(10)"
+	},
+	{
+		"table_name" : "databasechangeloglock",
+		"columnas" : "id integer, locked boolean, lockgranted timestamp without time zone, lockedby character varying(255)"
+	},
+	{
+		"table_name" : "fac_clientes_niveles",
+		"columnas" : "id integer, com_tercero_id integer, categoria_salud_id integer, tipo_atencion_id integer, tipo_afiliacion_id integer, copago numeric, cuota_moderadora numeric, valor_maximo numeric, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_contratos",
+		"columnas" : "id integer, numero character varying(20), fac_tipo_cliente_id integer, com_tercero_id integer, descripcion_abreviada character varying(500), objeto character varying(500), fecha_suscripcion date, fecha_inicial date, fecha_final date, dias_vencimiento smallint, valor numeric, fac_manual_tarifario_id integer, interes_efectivo_mensual numeric, alerta smallint, porcentaje_alerta numeric, valor_alerta numeric, bloqueo smallint, porcentaje_bloqueo numeric, valor_bloqueo numeric, tipo_contrato_id integer, usuarios_capitados smallint, valor_capitado_mes numeric, nivel_atencion_id integer, es_pos smallint, genera_factura_evento smallint, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, saldo numeric"
+	},
+	{
+		"table_name" : "fac_contratos_categorias",
+		"columnas" : "id integer, fac_contrato_id integer, com_categoria_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_contratos_citas",
+		"columnas" : "id integer, fac_contrato_id integer, com_producto_id integer, citas_mes_contrato integer, citas_personas_agno integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, finalidad_id integer"
+	},
+	{
+		"table_name" : "fac_contratos_copagos_cuotas",
+		"columnas" : "id integer, fac_contrato_id integer, tipo_atencion_id integer, tipo_afiliacion_id integer, categoria_salud_id integer, copago numeric, cuota numeric, valor_maximo numeric, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_contratos_metas",
+		"columnas" : "id integer, fac_contrato_id integer, com_producto_id integer, cobertura numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, mensual integer, anual integer"
+	},
+	{
+		"table_name" : "fac_contratos_promocion_mantenimiento",
+		"columnas" : "id integer, fac_contrato_id integer, activo smallint, com_producto_variante_id integer, edad_minima smallint, edad_maxima smallint, cantidad integer, unidad_tiempo_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_contratos_tipos_actividades",
+		"columnas" : "id integer, fac_contrato_id integer, com_tipo_actividad_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_detalles_contables",
+		"columnas" : "id integer, com_encabezado_documento_id integer, con_plan_contable_id integer, com_tercero_id integer, com_centro_costo_id integer, pre_proyecto_id integer, cos_recurso_id integer, com_encabezado_documento_referencia_id integer, descripcion character varying(500), valor_base numeric, com_impuesto_deduccion_id integer, porcentaje_impuesto_deduccion numeric, valor numeric, pvr_lista_tipo_revelacion_id integer, revelacion character varying(200), mostrar_estado_finaciero integer, valor_trm numeric, valor_dolar numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_detalles_contables_radicacion",
+		"columnas" : "id integer, com_documento_referencia_id integer, com_encabezado_documento_id integer, con_plan_contable_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_tercero_id integer, com_centro_costo_id integer, pre_proyecto_id integer, cos_recurso_id integer, valor numeric"
+	},
+	{
+		"table_name" : "fac_detalles_facturacion",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_documento_referencia_id integer, consecutivo_atencion_id integer, com_tercero_id integer, com_producto_compuesto_id integer, com_producto_variante_id integer, cantidad numeric, unitario numeric, descuento_porcentaje numeric, descuento_valor numeric, subtotal numeric, com_impuesto_deduccion_id integer, deduccion_valor numeric, total numeric, cantidad_pendiente numeric, nota text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tipo_moneda_id integer, valor_extranjero numeric, inv_lote_id integer, inv_bodega_id integer, com_centro_costo_id integer, fac_detalle_facturacion_id integer, saldo numeric, porcentaje_impuesto numeric, valor_impuesto numeric, discrimina_iva smallint, unidad_mayor_id integer, metadatos json"
+	},
+	{
+		"table_name" : "fac_detalles_incremento_tarifas",
+		"columnas" : "id integer, fac_incremento_tarifa_id integer, fac_detalle_manual_tarifario_id integer, anterior_valor numeric, nuevo_valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_detalles_liquidaciones",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_documento_referencia_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_detalles_parametros_cobros",
+		"columnas" : "id integer, fac_parametro_cobro_id bigint, grupo_servicio_id bigint, tipo_pago_moderador_id bigint, permite_edicion smallint, valor_cobro integer, estado smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_excepciones_tarifarias_cirugias",
+		"columnas" : "id integer, numero_excepcion character varying(250), tipo_manual_id integer, tipo_excepcion_quirurgica_id integer, es_cruento smallint, es_paquete smallint, numero_especialista integer, numero_cirugia integer, honorarios_medicos numeric, anestesiologia numeric, ayudantia numeric, derecho_sala_cruento numeric, derecho_sala_incruento numeric, perfusionista numeric, materiales numeric, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_factura_electronica_errores",
+		"columnas" : "id integer, com_encabezado_documento_id integer, mensaje character varying(500), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_facturas_electronicas",
+		"columnas" : "id integer, com_encabezado_id integer, token character varying(64), fecha_acuse date, prv_lista_elemento_id integer, comentario_acuse text, correos_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_facturas_errores_dian",
+		"columnas" : "id integer, fac_resolucion_facturacion_id integer, numero_factura character varying(20), fecha_envio timestamp without time zone, respuesta json, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_firmas_digitales",
+		"columnas" : "id integer, nombre character varying(150), clave character varying(500), fecha_caducidad date, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, certificado json"
+	},
+	{
+		"table_name" : "fac_identificacion_software",
+		"columnas" : "id integer, nombre_software character varying(150), identificador_software character varying(150), ping_software character varying(150), activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, entorno_receptor_id integer, codigo_tipo_factura character varying(500), divisa_factura character varying(500), tipo_pago integer, metodo_pago integer, test_set_id character varying(500)"
+	},
+	{
+		"table_name" : "fac_incremento_tarifas",
+		"columnas" : "id integer, fac_manual_tarifario_id integer, prv_tipo_incremento_id integer, fac_incremento_valor numeric, prv_aproximacion_id integer, prv_metodo_redondeo_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, estado smallint"
+	},
+	{
+		"table_name" : "fac_manuales_tarifarios",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(150), fac_manual_tarifario_basado_en_id integer, incremento_tarifas_proceso smallint, es_manual_base smallint, tarifas_categorias smallint, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, operador smallint, porcentaje numeric, favorito smallint"
+	},
+	{
+		"table_name" : "fac_manuales_tarifarios_categorias",
+		"columnas" : "id integer, fac_manual_tarifario_id integer, com_categoria_id integer, fac_manual_tarifario_base_id integer, operador smallint, porcentaje numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_parametros_cobros",
+		"columnas" : "id integer, com_sede_id bigint, agno integer, com_tercero_administradora_id bigint, fac_contrato_id bigint, tipo_regimen_id bigint, tipo_afiliacion_id bigint, tipo_categoria_id bigint, ambito_id bigint, nivel_id bigint, estado smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_recaudos",
+		"columnas" : "id integer, fecha date, com_encabezado_documento_id integer, con_cuenta_contable integer, forma_pago integer, estado integer, tipo_moneda integer, valor_und_extranjero double precision, tasa_cambio double precision, valor double precision, total double precision, tes_caja_id integer, banco_id integer, cuenta_banco bigint, numero_tarjeta bigint, numero_cheque bigint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_recibos_academusoft",
+		"columnas" : "id integer, codigo_recibo character varying(191), data json, estado integer, mensaje text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tipo_recibo_id integer, consecutivo_origen character varying(191)"
+	},
+	{
+		"table_name" : "fac_resoluciones_facturacion",
+		"columnas" : "id integer, numero_resolucion character varying(20), prefijo character varying(5), factura_inicial integer, factura_final bigint, fecha_inicial date, fecha_final date, clave_tecnica character varying(150), descripcion character varying(500), aviso_numero_facturacion integer, aviso_fecha_facturacion date, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, consecutivo_actual integer"
+	},
+	{
+		"table_name" : "fac_tarifas",
+		"columnas" : "id integer, fac_manual_tarifario_id integer, com_producto_id integer, es_pos smallint, cir_grupo_quirurgico_id integer, uvr_minimo numeric, uvr_maximo numeric, indice_smdlv numeric, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "fac_tipos_clientes",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(150), tipo_deudor_id integer, tipo_regimen_id integer, pre_plan_presupuestal_vigencia_actual_id integer, pre_plan_presupuestal_vigencia_anterior_id integer, con_plan_contable_pendiente_radicar_id integer, con_plan_contable_radicada_id integer, con_plan_contable_deterioro_acumulado_id integer, con_plan_contable_deterioro_edades_id integer, con_plan_contable_deterioro_amortizado_id integer, con_plan_contable_glosa_debito_id integer, con_plan_contable_glosa_credito_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, pre_fuente_financiamiento_id integer, con_plan_contable_dificil_cobro_id integer, con_plan_contable_deterioro_cartera_id integer"
+	},
+	{
+		"table_name" : "failed_jobs",
+		"columnas" : "id integer, connection text, queue text, payload text, exception text, failed_at timestamp without time zone"
+	},
+	{
+		"table_name" : "his.databasechangelog",
+		"columnas" : "id character varying(255), author character varying(255), filename character varying(255), dateexecuted timestamp without time zone, orderexecuted integer, exectype character varying(10), md5sum character varying(35), description character varying(255), comments character varying(255), tag character varying(255), liquibase character varying(20), contexts character varying(255), labels character varying(255), deployment_id character varying(10)"
+	},
+	{
+		"table_name" : "his.databasechangeloglock",
+		"columnas" : "id integer, locked boolean, lockgranted timestamp without time zone, lockedby character varying(255)"
+	},
+	{
+		"table_name" : "his.examen_cuello_control",
+		"columnas" : "id bigint, examen_id bigint, adenopatias bigint, soplos bigint, pulsos bigint, tiroides bigint, masas bigint, creado timestamp without time zone, actualizado timestamp without time zone, eliminado timestamp without time zone"
+	},
+	{
+		"table_name" : "his.finalidades",
+		"columnas" : "id integer, codigo character varying(255), nombre character varying(255), abreviatura character varying(100), sexofina character varying(5), edadmini integer, edadmaxi integer, creado timestamp without time zone, actualizado timestamp without time zone, eliminado timestamp without time zone"
+	},
+	{
+		"table_name" : "his.personales_cronicos",
+		"columnas" : "id bigint, antecedentes_cronicos_id bigint, hipertension_arterial_id bigint, hipertension_x_embarazo_id bigint, diabetes_mellitus_1_2_id bigint, obesidad_id bigint, insuficiencia_renal_cronica_id bigint, tiroides_id bigint, pancreatitis_id bigint, dislipidemia_id bigint, enfermedad_pulmonar_obstructiva_cronica_id bigint, tuberculosis_id bigint, infarto_agudo_miocardio_id bigint, angina_id bigint, insuficiencia_id bigint, soplo_cardiaco_id bigint, diabetes_gestacional_id bigint, retinopatia_id bigint, cancer_id bigint, asma_id bigint, conductas_sexuales_riesgo_id bigint, hospitalizaciones_descripcion text, farmacos_descripcion text, alergicos_descripcion text, quirurgicos_descripcion text, obstetricos_descripcion text, comentarios_personales text, creado timestamp without time zone, actualizado timestamp without time zone, eliminado timestamp without time zone"
+	},
+	{
+		"table_name" : "his.pruebas_laboratorio",
+		"columnas" : "id bigint, laboratorio_id bigint, nombre character varying(100), creado timestamp without time zone, actualizado timestamp without time zone, eliminado timestamp without time zone"
+	},
+	{
+		"table_name" : "his.signos_alarmas_cronicos",
+		"columnas" : "id bigint, revision_sistema_cronicos_id bigint, lipotimia_id bigint, vertigo_id bigint, alteracion_visual_id bigint, alteracion_auditiva_id bigint, vision_borrosa_id bigint, irritabilidad_id bigint, epistaxis_id bigint, palpitaciones_id bigint, disnea_id bigint, ortopnea_id bigint, angina_id bigint, claudicacion_id bigint, dolor_abdominal_id bigint, diarreas_id bigint, polidipsia_id bigint, polifagia_id bigint, poliuria_id bigint, convulsiones_id bigint, cefalea_id bigint, mareo_id bigint, nerviosismo_id bigint, nauseas_id bigint, vomito_id bigint, tinitus_id bigint, fosfenos_id bigint, insomnio_id bigint, ulceras_id bigint, sudoracion_id bigint, nicturia_id bigint, disuria_id bigint, polaquiuria_id bigint, hematuria_id bigint, flujo_vaginal_id bigint, prurito_vaginal_id bigint, disfuncion_erectil_id bigint, temblor_id bigint, edema_miembros_inferiores_id bigint, hormigueo_miembros_inferiores_id bigint, frialdad_miembros_inferiores_id bigint, adormecimiento_id bigint, calambres_id bigint, debilidad_muscular_id bigint, lesion_en_pies_id bigint, dolor_neurolitico_id bigint, examen_seno_id bigint, examen_seno_descripcion text, comentarios_signos_alarmas text, creado timestamp without time zone, actualizado timestamp without time zone, eliminado timestamp without time zone"
+	},
+	{
+		"table_name" : "his_diagnosticos",
+		"columnas" : "id integer, codigo character varying(10), nombre_causa character varying(191), genero_id integer, edad_minima integer, edad_maxima integer, clase_diagnostico_id integer, nivel_complejidad_id integer, enfermedad_notificacion smallint, diagnostico_principal smallint, diagnostico_relacionado smallint, codigo_formulario_id integer, protocolo_sivigila character varying(200), plan_cuidado_enfermeria character varying(200), activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "inv_bodegas",
+		"columnas" : "id integer, com_sede_id integer, nombre character varying(150), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, codigo character varying(20), com_centro_costo_id integer, tipo_abastecimiento_id integer, direccion text, latitud character varying(20), longitud character varying(20), permite_compra smallint, inv_ubicacion_id integer"
+	},
+	{
+		"table_name" : "inv_bodegas_abastecimientos",
+		"columnas" : "id integer, inv_bodega_origen_id integer, inv_bodega_destino_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "inv_bodegas_responsables",
+		"columnas" : "id integer, inv_bodega_id integer, com_tercero_id integer, predeterminado smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "inv_cierres",
+		"columnas" : "id integer, agno smallint, mes smallint, inv_bodega_id integer, inv_ubicacion_id integer, com_producto_variante_id integer, inv_lote_id integer, inicial_cantidad numeric, inicial_valor numeric, inicial_total numeric, entrada_cantidad numeric, entrada_valor numeric, entrada_total numeric, salida_cantidad numeric, salida_valor numeric, salida_total numeric, final_cantidad numeric, final_valor numeric, final_total numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "inv_detalles_contabilidad",
+		"columnas" : "id integer, inv_detalle_inventario_id integer, con_plan_contable_id integer, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_tercero_id integer, com_centro_costo_id integer, agno integer, mes integer, pre_proyecto_id integer, cos_recurso_id integer, descripcion text, valor_base numeric, com_impuesto_deduccion_id integer, porcentaje_impuesto_deduccion numeric, tipo_revelacion integer, revelacion text, estado_financiero integer, valor_trm numeric, valor_dolar numeric, com_encabezado_documento_referencia_id integer"
+	},
+	{
+		"table_name" : "inv_detalles_inventarios",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_tercero_id integer, com_centro_costo_id integer, com_producto_compuesto_id integer, com_producto_variante_id integer, inv_lote1_id integer, inv_lote2_id integer, cantidad_fisico numeric, valor_fisico numeric, cantidad numeric, unitario numeric, subtotal numeric, total numeric, com_impuesto_deduccion_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tipo_moneda_id integer, unitario_moneda_extranjera numeric, tasa_cambio numeric, descuento_porcentaje numeric, descuento_valor numeric, impuesto_porcentaje numeric, cantidad_pendiente numeric, unidad_mayor_id integer, com_documento_referencia_id integer, saldo numeric, cantidad_ajuste numeric, consecutivo_atencion_id integer, fecha_necesaria timestamp without time zone, impuesto_valor numeric, nota text, sistema numeric, inv_detalle_inventario_referencia_id integer, manual smallint, inv_ubicacion_id integer, acf_activo_fijo_id integer, unitario_neto numeric, acf_clase_id integer, activo_fijo_data json, descripcion text, acf_poliza_seguro_id integer, acf_amparo_id integer, acf_faltante_sobrante integer, inv_marca_id integer, acf_tipo_activo_id integer, fac_detalle_facturacion_id integer, cantidad_autorizada numeric, sst_asignacion_dotacion_proteccion_id integer, valor_administracion numeric, valor_imprevistos numeric, valor_utilidad numeric, valor_aiu numeric"
+	},
+	{
+		"table_name" : "inv_detalles_presupuesto",
+		"columnas" : "id integer, inv_detalle_inventario_id integer, pre_detalle_presupuestal_id integer, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "inv_grupos_marcas_marcas",
+		"columnas" : "id integer, grupo_marca_id integer, inv_marca_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "inv_lotes",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(150), fecha_fabricado date, fecha_vencimiento date, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_producto_variante_id integer"
+	},
+	{
+		"table_name" : "inv_marcas",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(150), fabrica_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint"
+	},
+	{
+		"table_name" : "inv_productos_saldos",
+		"columnas" : "id integer, inv_bodega_id integer, inv_ubicacion_id integer, inv_lote_id integer, com_producto_variante_id integer, cantidad numeric, valor numeric, total numeric, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "inv_productos_usos",
+		"columnas" : "id integer, uso_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, com_producto_id integer, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "inv_reclamaciones",
+		"columnas" : "id integer, tipo_reclamacion_id integer, referencia character varying(200), fecha date, descripcion character varying(200), valor numeric, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "inv_ubicaciones",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(150), izquierda integer, derecha integer, nivel integer, inv_bodega_id integer, inv_ubicacion_id integer, pasillo integer, altura integer, posicion integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "inv_usuarios_montos_requisiciones",
+		"columnas" : "id integer, user_id integer, monto_documento numeric, monto_maximo_mes numeric, deleted_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "jobs",
+		"columnas" : "id bigint, queue character varying(191), payload text, attempts smallint, reserved_at integer, available_at integer, created_at integer"
+	},
+	{
+		"table_name" : "jur_clasificaciones_faltas",
+		"columnas" : "id integer, codigo character varying(20), prv_lista_elemento_falta_id integer, prv_lista_elemento_ocurrencia_aplicar_id integer, prv_lista_elemento_tipo_sancion_id integer, dias_suspension integer, metadatos json, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "jur_detalle_procesos_notificaciones",
+		"columnas" : "id integer, codigo character varying(20), jur_encabezado_proceso_id integer, enviar_email smallint, fecha date, hora json, lugar_presentarse text, com_tercero_notificador_id integer, asunto text, explicacion text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "jur_detalles_procesos_descargos",
+		"columnas" : "id integer, codigo character varying(20), jur_encabezado_proceso_id integer, hora json, fecha date, com_tercero_responsable_id integer, explicacion_citacion text, pregunta_respuesta text, conclusion_final text, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "jur_detalles_procesos_faltas",
+		"columnas" : "id integer, codigo character varying(20), jur_encabezado_proceso_id integer, jur_falta_id integer, fecha date, hora json, lugar text, com_tercero_responsable_id integer, cantidad integer, explicacion_falta text, es_llamado_atencion smallint, fecha_analisis date, hora_analisis json, prv_lista_elemento_gravedad_falta_id integer, prv_lista_elemento_tipo_sancion_id integer, dia_suspension integer, prv_lista_elemento_ocurrencia_id integer, verificacion_hechos text, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "jur_encabezados_procesos",
+		"columnas" : "id integer, fecha date, nom_vinculacion_id integer, com_tercero_responsable_id integer, descripcion text, prv_lista_elemento_estado_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "jur_faltas",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(150), descripcion text, caducidad_dias integer, politica text, metadatos json, prv_lista_tipo_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "jwt_auth_session_storage",
+		"columnas" : "id integer, key character varying(191), value character varying(191), expires_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "media",
+		"columnas" : "id integer, disk character varying(32), directory character varying(191), filename character varying(191), extension character varying(32), mime_type character varying(128), aggregate_type character varying(32), size integer, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "media__file_translations",
+		"columnas" : "id integer, file_id integer, locale character varying(191), description character varying(191), alt_attribute character varying(191), keywords character varying(191)"
+	},
+	{
+		"table_name" : "media__files",
+		"columnas" : "id integer, filename character varying(191), path character varying(191), extension character varying(191), mimetype character varying(191), filesize character varying(191), folder_id character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone, is_folder boolean"
+	},
+	{
+		"table_name" : "media__imageables",
+		"columnas" : "id integer, file_id integer, imageable_id integer, imageable_type character varying(191), zone character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone, order integer"
+	},
+	{
+		"table_name" : "mediables",
+		"columnas" : "media_id integer, mediable_type character varying(191), mediable_id integer, tag character varying(191), order integer"
+	},
+	{
+		"table_name" : "menu__menu_translations",
+		"columnas" : "id integer, menu_id integer, locale character varying(191), status smallint, title character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "menu__menuitem_translations",
+		"columnas" : "id integer, menuitem_id integer, locale character varying(191), status smallint, title character varying(191), url character varying(191), uri character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone, description character varying(191)"
+	},
+	{
+		"table_name" : "menu__menuitems",
+		"columnas" : "id integer, menu_id integer, page_id integer, position integer, target character varying(10), module_name character varying(191), parent_id integer, lft integer, rgt integer, depth integer, created_at timestamp without time zone, updated_at timestamp without time zone, is_root boolean, icon character varying(191), link_type character varying(191), class character varying(191)"
+	},
+	{
+		"table_name" : "menu__menus",
+		"columnas" : "id integer, name character varying(191), primary smallint, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "migrations",
+		"columnas" : "id integer, migration character varying(191), batch integer"
+	},
+	{
+		"table_name" : "nom_aportes_masa",
+		"columnas" : "id integer, nom_novedad_referencia_id integer, com_tercero_id integer, tipo_aporte_id integer, com_tercero_aporte_id integer, nom_tipo_riesgo_id integer, tarifa_especial_pension_id integer, fecha_inicio date, nota character varying(100), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, actividad_ciiu_id integer"
+	},
+	{
+		"table_name" : "nom_aportes_terceros",
+		"columnas" : "id integer, com_tercero_id integer, tipo_aporte_id integer, com_tercero_aporte_id integer, fecha_inicio date, fecha_fin date, nota text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, nom_tipo_riesgo_id integer, tarifa_especial_pension_id integer, actividad_ciiu_id integer"
+	},
+	{
+		"table_name" : "nom_calendarios",
+		"columnas" : "id integer, activo smallint, codigo character varying(100), nombre character varying(250), modulos json, descripcion text, reglas json, eventos json, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_carga_academica_academulsoft",
+		"columnas" : "id integer, data json, estado smallint, mensaje character varying(191), deleted_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_cargos",
+		"columnas" : "id integer, activo smallint, codigo character varying(20), cargo character varying(150), nivel_cargo_id integer, sueldo_basico numeric, sueldo_maximo numeric, descripcion text, analisis_salarial text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_documento_administrativo_id integer, numero_acto_administrativo character varying(45), fecha_acto_administrativo date, mision text, grado_id integer, tipo_remuneracion_id integer"
+	},
+	{
+		"table_name" : "nom_cargos_categorias",
+		"columnas" : "id integer, nom_cargo_id integer, nom_categoria_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, descripcion text, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_cargos_conceptos",
+		"columnas" : "id integer, nom_cargo_id integer, nom_concepto_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_cargos_conceptos_permitidos",
+		"columnas" : "id integer, nom_cargo_id integer, nom_concepto_id integer, cantidad_hora_extra integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_categorias",
+		"columnas" : "id integer, activo smallint, nombre text, nom_categoria_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, codigo character varying(20), nivel integer, izquierda integer, derecha integer, orden smallint"
+	},
+	{
+		"table_name" : "nom_cesantias_detalles",
+		"columnas" : "id integer, nom_cesantias_encabezado_id integer, com_encabezado_documento_id integer, com_tercero_empleado_id integer, com_tercero_id integer, departamento_id integer, municipio_id integer, sueldo numeric, salario_base numeric, valor_aporte numeric, fecha_ingreso date, fecha_retiro date, estado integer, consolidadas numeric, aplicadas numeric, ajuste numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_encabezado_documento_referencia_id integer"
+	},
+	{
+		"table_name" : "nom_cesantias_encabezados",
+		"columnas" : "id integer, agno integer, mes integer, com_tercero_empresa_id integer, com_tercero_id integer, log json, ruta_archivo text, nombre_archivo text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_conceptos",
+		"columnas" : "id integer, activo smallint, codigo character varying(20), nombre character varying(250), frecuencia_id integer, clase_id integer, prv_maestro_concepto_id integer, formula text, entrada_id integer, con_plan_contable_credito_id integer, con_plan_contable_patrono_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, redondeo_id integer, pre_plan_presupuestal_id integer, com_tercero_id integer, imagen_formula text, pre_fuente_financiamiento_id integer, art_383_cpp smallint"
+	},
+	{
+		"table_name" : "nom_conceptos_bases",
+		"columnas" : "id integer, nom_concepto_id integer, nom_concepto_base_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_conceptos_centros_costos",
+		"columnas" : "id integer, nom_concepto_id integer, com_centro_costo_id integer, con_plan_contable_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_conceptos_grupos",
+		"columnas" : "id integer, nom_grupo_id integer, nom_concepto_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_conceptos_masa",
+		"columnas" : "id integer, nom_novedad_referencia_id integer, nom_vinculacion_id integer, nom_concepto_id integer, cantidad_valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_tercero_id integer"
+	},
+	{
+		"table_name" : "nom_conceptos_vinculaciones",
+		"columnas" : "id integer, nom_vinculacion_id integer, nom_concepto_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, cantidad_valor double precision, com_tercero_id integer, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_depositos_judiciales",
+		"columnas" : "id integer, com_archivo_plano_id integer, nombre_archivo character varying(191), periodo character varying(6), nom_tipos_vinculaciones_id json, banco_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_despachos_judiciales",
+		"columnas" : "id integer, nombre character varying(191), cuenta_judicial character varying(12), codigo_oficina character varying(4), codigo_interno character varying(12), municipio_id integer, departamento_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_detalles_contables",
+		"columnas" : "id integer, com_encabezado_documento_id integer, agno integer, mes integer, con_plan_contable_id integer, com_centro_costo_id integer, com_tercero_id integer, com_proyecto_id integer, cos_recurso_id integer, descripcion text, valor_base numeric, com_impuesto_deduccion_id integer, porcentaje_impuesto_deduccion numeric, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_tercero2_id integer"
+	},
+	{
+		"table_name" : "nom_detalles_liquidaciones",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_tercero_empleado_id integer, nom_vinculacion_id integer, nom_novedad_referencia_id integer, acumulado_inicial smallint, nom_novedad_id integer, fecha_liquidacion timestamp without time zone, fecha_aplicada date, fecha_inicial date, fecha_final date, descripcion text, nom_concepto_id integer, com_tercero_id integer, tipo_aporte_id integer, tarifa_especial_pension_id integer, nom_tipo_riesgo_id integer, aca_carga_academica_detalle_id integer, com_centro_costo_id integer, aca_programa_academico_id integer, aca_asignatura_programa_id integer, categoria_docente_id integer, thu_nivel_estudio_id integer, aca_tipo_docente_catedra_id integer, expediente character varying(500), tipo_embargo_id integer, prioridad_id integer, numero_cuota numeric, tipo_ausentismo smallint, motivo_ausentismo_id integer, his_diagnostico_id integer, base numeric, porcentaje numeric, porcentaje_patrono numeric, cantidad numeric, cantidad_patrono integer, cantidad_entidad integer, valor numeric, valor_empleado numeric, valor_patrono numeric, valor_entidad numeric, traza json, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, codigo_centro_trabajo character varying(9), nom_prenomina_detalle_referencia_id integer, aca_grupo_academico_id integer, aca_carga_academica_novedad_id integer, liquidado smallint, tipo_comprobante_id integer, metadatos json"
+	},
+	{
+		"table_name" : "nom_detalles_liquidaciones_errores",
+		"columnas" : "id integer, com_encabezado_documento_id integer, nom_vinculacion_id integer, origen character varying(100), dato character varying(100), tipo character varying(100), referencia character varying(100), descripcion text, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_detalles_liquidaciones_novedades",
+		"columnas" : "id integer, com_encabezado_documento_id integer, nom_novedad_id integer, cantidad_valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_detalles_presupuestales",
+		"columnas" : "id integer, nom_detalle_liquidacion_id integer, pre_detalle_presupuestal_id integer, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_encabezado_documento_id integer"
+	},
+	{
+		"table_name" : "nom_empleados_retiros",
+		"columnas" : "id integer, motivo_retiro_id integer, com_tercero_empleado_id integer, nom_vinculacion_id integer, nom_plan_cargo_id integer, com_tercero_lider_id integer, descripcion character varying(250), fecha_aprobacion date, com_tercero_aprueba_id integer, estado_vinculacion_actual_id integer, estado_vinculacion_nuevo_id integer, estado_plan_cargo_actual_id integer, estado_plan_cargo_nuevo_id integer, fecha_procesado date, estado_procesado_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, observaciones text, acto_administrativo_id integer, numero_acto_administrativo character varying(45), fecha_aplicacion date, fecha_acto_administrativo date"
+	},
+	{
+		"table_name" : "nom_grupos",
+		"columnas" : "id integer, codigo character varying(191), activo smallint, nombre character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_historial_salarios",
+		"columnas" : "id integer, nom_incremento_salarial_detalle_id integer, nom_vinculacion_id integer, fecha_aplicacion date, salario_actual numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_historicos_certificados",
+		"columnas" : "id integer, nom_vinculacion_id integer, com_plantilla_id integer, com_documento_firmas_id integer, contenido text, email character varying(100), created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_incremento_salarial_detalle",
+		"columnas" : "id integer, nom_novedad_referencia_id integer, com_tercero_empleado_id integer, nom_vinculacion_id integer, tipo_incremento_id integer, metodo_redondeo_id integer, valor_incremento numeric, valor_nuevo_salario numeric, fecha_aplicacion date, fecha_procesamiento date, estado_proceso_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, observaciones text"
+	},
+	{
+		"table_name" : "nom_nominas_electronicas",
+		"columnas" : "id integer, agno integer, mes integer, com_tercero_empleado_id integer, data_json json, CUNE text, xml text, estado integer, es_ajuste integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_nominas_electronicas_logs",
+		"columnas" : "id integer, nom_nomina_electronica_id integer, codigo_respuesta character varying(20), mensaje_respuesta text, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_nominas_electronicas_vacaciones",
+		"columnas" : "id integer, com_tercero_empleado_id integer, agno integer, valor_reportado numeric, fecha_reportada date, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_novedades",
+		"columnas" : "id integer, nom_novedad_referencia_id integer, nom_vinculacion_id integer, nom_concepto_id integer, com_tercero_id integer, descripcion text, cantidad_valor numeric, com_documento_administrativo_id integer, numero_documento_administrativo character varying(45), fecha_documento_administrativo date, fecha_inicial date, fecha_final date, fecha_aplicada date, numero_cuota numeric, tipo_ausentismo smallint, motivo_ausentismo_id integer, his_diagnostico_id integer, calendario_individual smallint, dias_habiles smallint, dias integer, dia_real integer, com_tercero_aprueba_id integer, fecha_aprobacion date, sustitucion_patronal smallint, dias_derecho integer, dias_en_tiempo integer, dias_en_dinero integer, fecha_desde date, fecha_hasta date, fecha_regreso date, dias_pendientes integer, historico_detalle json, expediente character varying(100), tipo_embargo_id integer, prioridad_id integer, tipo_descuento_id integer, forma_pago_id integer, frecuencia_pago_id integer, demandante character varying(191), activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, aca_carga_academica_detalle_id integer, com_documento_externo_id integer, numero_documento_externo character varying(45), fecha_documento_externo date, com_encabezado_documento_liquidacion_id integer, fecha_liquidacion date, valor_liquidado numeric, saldo numeric, horas json, hora_real json, nom_novedad_referencia_refinanciado_id integer, formula text, imagen_formula text, aca_carga_academica_novedad_id integer, anulado smallint, tipo_persona_demandante_id integer, apellidos_demandante text, documento_demandante character varying(10), nom_despacho_id integer, concepto_judicial_id integer, numero_cuenta_bancaria character varying(12), numero_proceso_embargo character varying(23), banco_id integer, tipo_cuenta_id integer, pago_directo smallint, com_tercero_preaprueba_id integer, fecha_preaprobacion date, com_tercero_rechazo_id integer, fecha_rechazo date, estado_novedad_id integer, descripcion_autorizacion_rechazo text, nom_tarifa_desplazamiento_id integer, cantidad_desplazamiento numeric, lote integer, thu_solicitud_beneficio_id integer, thu_tipo_beneficio_id integer, tipo_beneficiario_id integer, thu_tercero_familiar_id integer, metadatos json, incluir_archivo_plano smallint, son_dias_habiles smallint"
+	},
+	{
+		"table_name" : "nom_novedades_disfrutes_vacaciones",
+		"columnas" : "id integer, nom_novedad_id integer, tipo_operacion integer, fecha_inicial date, fecha_final date, dias_pendientes integer, com_documento_id integer, numero_documento character varying(15), fecha_documento date, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, observacion text"
+	},
+	{
+		"table_name" : "nom_novedades_reemplazos",
+		"columnas" : "id bigint, tipo_encargo_id integer, com_documento_oficio_id integer, numero_documento_oficio character varying(45), fecha_documento_oficio date, com_documento_nombramiento_id integer, numero_documento_nombramiento character varying(45), fecha_documento_nombramiento date, com_documento_posesion_id integer, numero_documento_posesion character varying(45), fecha_documento_posesion date, nom_vinculacion_id integer, nom_vinculacion_reemplazo_id integer, com_documento_id integer, com_encabezado_documento_id integer, fecha_inicial date, fecha_final date, fecha_pago_inicial date, fecha_pago_final date, nom_plan_cargo_id integer, nuevo_sueldo numeric, centro_costo_remplazo smallint, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, estado_plan_cargo_origen_id integer, estado_vinculacion_origen_id integer, estado_plan_cargo_reemplazo_id integer, estado_vinculacion_reemplazo_id integer, porcentaje integer, estado_procesado_id integer, afecta_plan_cargo smallint, com_tercero_empleado_id integer, nom_plan_cargo_origen_id integer, fecha_procesado timestamp without time zone, observaciones text, tipo_remuneracion_id integer, fecha_finalizacion date, com_documento_acto_administrativo_finalizacion_id integer, numero_documento_finalizacion integer, fecha_documento_finalizacion date, descripcion_finalizacion text, estado_plan_cargo_empleado_finalizacion_id integer, estado_plan_cargo_reemplazo_finalizacion_id integer, finalizacion_afecta_vinculacion_actual smallint"
+	},
+	{
+		"table_name" : "nom_novedades_reemplazos_centros_costos",
+		"columnas" : "id integer, nom_novedad_reemplazo_id integer, com_centro_costo_id integer, porcentaje integer, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_novedades_reemplazos_conceptos",
+		"columnas" : "id integer, nom_novedad_reemplazo_id integer, nom_concepto_id integer, com_tercero_id integer, cantidad_valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_novedades_referencias",
+		"columnas" : "id integer, tipo_referencia_id integer, descripcion text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, conceptos json, fecha_autorizacion date, com_tercero_autoriza_id integer, estado_proceso_id integer, metadatos json, com_documento_externo_id integer, numero_documento_externo character varying(45), fecha_documento_externo date, com_documento_administrativo_id integer, numero_documento_administrativo character varying(45), fecha_documento_administrativo date, lote integer"
+	},
+	{
+		"table_name" : "nom_pila_archivos",
+		"columnas" : "id integer, nombre_archivo character varying(191), ruta character varying(191), tipo_archivo character varying(1), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_pila_cruces",
+		"columnas" : "id integer, prv_lista_tipo_id_1 integer, prv_lista_tipo_id_2 integer, codigo character varying(20), nombre character varying(150), activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tipo_validacion smallint"
+	},
+	{
+		"table_name" : "nom_pila_detalle_tipo_1",
+		"columnas" : "id integer, nom_pila_encabezado_id integer, tipo_registro character varying(2), modalidad character varying(1), secuencia character varying(4), razon_social_aportante character varying(200), tipo_documento_aportante character varying(2), documento_aportante character varying(16), digito_verificacion_aportante character varying(1), tipo_planilla character varying(1), numero_planilla_asociada character varying(10), fecha_pago_asociada date, forma_presentacion character varying(1), cod_sucursal character varying(10), nom_sucursal character varying(40), cod_arl character varying(6), periodo_pago character varying(7), periodo_pago_salud character varying(7), planilla character varying(191), fecha_pago date, total_empleados character varying(5), total_nomina character varying(12), tipo_aportante character varying(2), codigo_operador character varying(2), created_at timestamp without time zone, updated_at timestamp without time zone, nom_pila_archivo_id integer, nom_tipos_vinculaciones_id json"
+	},
+	{
+		"table_name" : "nom_pila_detalle_tipo_2",
+		"columnas" : "id bigint, nom_pila_detalle_tipo_1_id integer, tipo_registro character varying(2), secuencia character varying(5), tipo_documento character varying(2), numero_identificacion character varying(16), tipo_cotizante character varying(2), subtipo_cotizante character varying(2), colombiano_exterior character varying(1), cod_departamento character varying(2), cod_ciudad character varying(3), primer_apellido character varying(20), segundo_apellido character varying(30), primer_nombre character varying(20), segundo_nombre character varying(30), ing character varying(1), ret character varying(1), tde character varying(1), tae character varying(1), tdp character varying(1), tap character varying(1), vsp character varying(1), correcion character varying(1), vst character varying(1), sln character varying(1), ige character varying(1), lma character varying(1), vac_lr character varying(1), avp character varying(1), vct character varying(1), dias_irl character varying(2), cod_afp_traslado character varying(6), cod_eps_traslado character varying(6), cod_ccf character varying(6), dias_afp character varying(2), dias_eps character varying(2), dias_arl character varying(2), dias_ccf character varying(2), salario character varying(9), tipo_salario character varying(1), ibc_pension character varying(9), ibc_salud character varying(9), ibc_arl character varying(9), ibc_ccf character varying(9), tarifa_pension character varying(7), aporte_pension character varying(9), aporte_voluntario_afiliado_pension character varying(9), aporte_voluntario_aportante_pension character varying(9), total_pension character varying(9), aporte_fondo_solidaridad character varying(9), aporte_fondo_subsistencia character varying(9), valor_no_retenido character varying(9), tarifa_salud character varying(7), aporte_salud character varying(9), valor_upc character varying(9), no_autorizacion_ige character varying(15), valor_ige character varying(9), no_autorizacion_lma character varying(15), valor_lma character varying(9), tarifa_riesgos character varying(9), centro_trabajo character varying(9), aporte_riesgos character varying(9), tarifa_ccf character varying(7), aporte_ccf character varying(9), tarifa_sena character varying(7), aporte_sena character varying(9), tarifa_icbf character varying(7), aporte_icbf character varying(9), tarifa_esap character varying(7), aporte_esap character varying(9), tarifa_min character varying(7), aporte_min character varying(9), tipo_doc_cotiz_40 character varying(2), num_doc_cotiz_40 character varying(16), exonerado_ley_1607 character varying(1), cod_arl character varying(6), clase_riesgo character varying(1), indicador_tarifa_pension character varying(1), fecha_ingreso date, fecha_retiro date, fecha_inicio_vsp date, fecha_inicio_sln date, fecha_fin_sln date, fecha_inicio_ige date, fecha_fin_ige date, fecha_inicio_lma date, fecha_fin_lma date, fecha_inicio_vac_lr date, fecha_fin_vac_lr date, fecha_inicio_vct date, fecha_fin_vct date, fecha_inicio_irl date, fecha_fin_irl date, ibc_otros_parafiscales character varying(9), no_horas character varying(3), created_at timestamp without time zone, updated_at timestamp without time zone, fecha_colombiano_exterior date, extranjero_no_pension character varying(1), cod_afp character varying(6), cod_eps character varying(6), tarifa_salud_empleador character varying(7), aporte_salud_empleador character varying(9), tarifa_pension_empleador character varying(7), aporte_pension_empleador character varying(9), actividad_economica_arl character varying(7)"
+	},
+	{
+		"table_name" : "nom_pila_encabezado",
+		"columnas" : "id integer, razon_social_aportante character varying(200), tipo_documento_aportante character varying(2), documento_aportante character varying(16), digito_verificacion_aportante character varying(1), cod_sucursal character varying(10), nom_sucursal character varying(40), clase_aportante character varying(1), naturaleza_aportante character varying(1), tipo_persona character varying(1), forma_presentacion character varying(1), direccion character varying(40), cod_ciudad character varying(3), cod_departamento character varying(2), cod_actividad_economica character varying(4), telefono character varying(10), fax character varying(10), email character varying(60), documento_representante_legal character varying(16), dig_verficacion_representante_legal character varying(1), tipo_documento_representante_legal character varying(2), primer_apellido_rep_legal character varying(20), segundo_apellido_rep_legal character varying(30), primer_nombre_rep_legal character varying(20), segundo_nombre_rep_legal character varying(30), fecha_inicio_concordato date, tipo_accion character varying(1), fecha_termina_actividades date, codigo_operador character varying(2), periodo character varying(6), tipo_aportante character varying(2), fecha_matricula_1429 date, cod_departamento_1429 character varying(2), exonerado_ley_1607 character varying(1), beneficiario_ley_1429 character varying(1), created_at timestamp without time zone, updated_at timestamp without time zone, nom_pila_archivo_id integer"
+	},
+	{
+		"table_name" : "nom_pila_novedades",
+		"columnas" : "id bigint, com_encabezado_documento_id integer, com_tercero_empleado_id integer, nom_vinculacion_id integer, dias character varying(2), salario character varying(9), ing character varying(1), ret character varying(1), tde character varying(1), tae character varying(1), tdp character varying(1), tap character varying(1), vsp character varying(1), correcion character varying(1), vst character varying(1), sln character varying(1), ige character varying(1), lma character varying(1), vac_lr character varying(1), avp character varying(1), vct character varying(1), dias_irl character varying(1), tarifa_riesgos character varying(9), centro_trabajo character varying(9), clase_riesgo character varying(1), fecha_ingreso date, fecha_retiro date, fecha_inicio_vsp date, fecha_inicio_sln date, fecha_fin_sln date, fecha_inicio_ige date, fecha_fin_ige date, fecha_inicio_lma date, fecha_fin_lma date, fecha_inicio_vac_lr date, fecha_fin_vac_lr date, fecha_inicio_vct date, fecha_fin_vct date, fecha_inicio_irl date, fecha_fin_irl date, no_horas character varying(3), created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_pila_validacion_cruces",
+		"columnas" : "id integer, nom_pila_cruce_id integer, prv_lista_elemento_id_1 integer, prv_lista_elemento_id_2 integer, obligado smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_plan_cargos",
+		"columnas" : "id integer, nom_cargo_id integer, tipo_planta_id integer, tipo_cargo_id integer, fecha_inicial date, fecha_final date, com_centro_costo_id integer, nom_vinculacion_posesion_id integer, nom_vinculacion_actual_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_dependencia_id integer, com_documento_administrativo_id integer, numero_documento_administrativo character varying(45), fecha_documento_administrativo date, estado_plan_cargo_id integer, codigo character varying(20), com_documento_administrativo_finalizacion_id integer, numero_documento_finalizacion character varying(45), fecha_documento_finalizacion date, descripcion_finalizacion text"
+	},
+	{
+		"table_name" : "nom_plan_cargos_modificacion",
+		"columnas" : "id integer, fecha_documento_administrativo date, com_documento_administrativo_id integer, numero_documento_administrativo integer, nom_plan_cargo_id integer, estado_plan_cargo_id integer, com_dependencia_origen_id integer, nom_centro_costo_origen_id integer, descripcion text, com_dependencia_destino_id integer, nom_centro_costo_destino_id integer, estado_procesado_id integer, fecha_procesado date, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_plan_cargos_tipos_vinculaciones",
+		"columnas" : "id integer, nom_plan_cargo_id integer, nom_tipo_vinculacion_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_prenomina_detalles_liquidaciones",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_tercero_empleado_id integer, nom_vinculacion_id integer, nom_novedad_referencia_id integer, acumulado_inicial smallint, nom_novedad_id integer, fecha_liquidacion timestamp without time zone, fecha_aplicada date, fecha_inicial date, fecha_final date, descripcion text, nom_concepto_id integer, com_tercero_id integer, tipo_aporte_id integer, tarifa_especial_pension_id integer, nom_tipo_riesgo_id integer, aca_carga_academica_detalle_id integer, com_centro_costo_id integer, aca_programa_academico_id integer, aca_asignatura_programa_id integer, categoria_docente_id integer, thu_nivel_estudio_id integer, aca_tipo_docente_catedra_id integer, expediente character varying(500), tipo_embargo_id integer, prioridad_id integer, numero_cuota numeric, tipo_ausentismo smallint, motivo_ausentismo_id integer, his_diagnostico_id integer, base numeric, porcentaje numeric, porcentaje_patrono numeric, cantidad numeric, cantidad_patrono integer, cantidad_entidad integer, valor numeric, valor_empleado numeric, valor_patrono numeric, valor_entidad numeric, traza json, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, codigo_centro_trabajo character varying(9), aca_grupo_academico_id integer, aca_carga_academica_novedad_id integer, liquidado smallint, tipo_comprobante_id integer, metadatos json"
+	},
+	{
+		"table_name" : "nom_procesos",
+		"columnas" : "id integer, activo smallint, nombre text, nom_proceso_id integer, izquierda integer, derecha integer, nivel integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, codigo character varying(20), descripcion text"
+	},
+	{
+		"table_name" : "nom_procesos_logs",
+		"columnas" : "id integer, com_tercero_procesa_id integer, com_tercero_reversa_id integer, estado_proceso_id integer, origen_componente_id integer, fecha_procesado timestamp without time zone, fecha_reversado timestamp without time zone, metadatos json, origen_componente character varying(100), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, detalle_proceso text"
+	},
+	{
+		"table_name" : "nom_reubicaciones",
+		"columnas" : "id integer, tipo_operacion_id integer, com_documento_administrativo_id integer, numero_acto_administrativo character varying(45), fecha_acto_administrativo date, descripcion text, nom_vinculacion_origen_id integer, nom_plan_cargo_origen_id integer, com_dependencia_origen_id integer, nom_vinculacion_destino_id integer, nom_plan_cargo_destino_id integer, com_dependencia_destino_id integer, estado_procesado_id integer, traza json, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, fecha_aplicacion date, com_documento_administrativo_destino_id integer, numero_documento_administrativo_destino character varying(191), fecha_documento_administrativo_destino date"
+	},
+	{
+		"table_name" : "nom_tarifas_catedras",
+		"columnas" : "id integer, com_vigencia_id integer, tipo_programa_academico_id integer, basada_categoria smallint, categoria_docente_id integer, thu_nivel_estudio_id integer, tipo_valor smallint, valor numeric, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_tarifas_desplazamientos",
+		"columnas" : "id integer, com_vigencia_id integer, municipio_origen_id integer, municipio_destino_id integer, valor_desplazamiento numeric, factor_liquidacion numeric, descripcion text, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_acto_administrativo_id integer, numero_acto_administrativo character varying(191), fecha_acto_administrativo date, departamento_origen_id integer, departamento_destino_id integer"
+	},
+	{
+		"table_name" : "nom_tipo_vinculaciones_prv_listas_elementos",
+		"columnas" : "id integer, nom_tipo_vinculacion_id integer, tipo_aporte_id integer"
+	},
+	{
+		"table_name" : "nom_tipos_riesgos",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(191), porcentaje numeric, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "nom_tipos_vinculaciones",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(191), unico smallint, principal smallint, afecta_plan_cargo smallint, fecha_finalizacion_id integer, nom_calendario_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, es_docencia smallint, tipo_remuneracion json, es_catedra smallint, sede_pila character varying(50), tipo_comprobante_id integer, tipo_contrato_id json, categoria_docente json"
+	},
+	{
+		"table_name" : "nom_vinculaciones",
+		"columnas" : "id integer, com_tercero_empleado_id integer, codigo character varying(20), fecha date, nom_tipo_vinculacion_id integer, municipio_vinculacion_id integer, tipo_contrato_vinculacion_id integer, com_adjunto_id integer, tipo_remuneracion_id integer, ley_primer_empleo smallint, si_es_confianza smallint, sueldo numeric, fecha_fin date, nom_plan_cargo_id integer, nom_grupo_nomina_id integer, com_tercero_jefe_id integer, com_sede_oficina_id integer, categoria_docente_id integer, hora_trabajo integer, periodo_prueba smallint, fecha_fin_periodo_prueba date, frecuencia_pago_id integer, com_tercero_evaluador_id integer, nom_calendario_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, estado_vinculacion_id integer, com_dependencia_id integer, com_documento_administrativo_id integer, numero_documento_administrativo character varying(45), fecha_documento_administrativo date, objeto text, nom_cargo_id integer, empleado_exterior smallint, tipo_cotizante_id integer, tipo_subcotizante_id integer, porcentaje_fijo_retencion numeric, lote integer, fecha_final_pre_desvinculacion date, temporal smallint"
+	},
+	{
+		"table_name" : "nom_vinculaciones_encabezados_documentos",
+		"columnas" : "id integer, com_encabezado_documento_id integer, nom_vinculacion_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, com_tercero_empleado_id integer"
+	},
+	{
+		"table_name" : "nom_vinculaciones_renovaciones",
+		"columnas" : "id integer, nom_vinculacion_id integer, com_documento_acto_administrativo_id integer, numero_acto_administrativo character varying(45), fecha_acto_administrativo date, fecha_inicial date, fecha_final date, descripcion text, deleted_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone, com_importador_id bigint"
+	},
+	{
+		"table_name" : "notifications",
+		"columnas" : "id uuid, type character varying(191), notifiable_type character varying(191), notifiable_id bigint, data text, read_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "page__page_translations",
+		"columnas" : "id integer, page_id integer, locale character varying(191), title character varying(191), slug character varying(191), status character varying(191), body text, meta_title character varying(191), meta_description character varying(191), og_title character varying(191), og_description character varying(191), og_image character varying(191), og_type character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "page__pages",
+		"columnas" : "id integer, is_home boolean, template character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "persistences",
+		"columnas" : "id integer, user_id integer, code character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "pre_cgrs",
+		"columnas" : "id integer, codigo character varying(40), nombre text, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_vigencia_id integer, maneja_movimiento smallint, derecha integer, izquierda integer, nivel integer, agno integer, mes integer, pre_cgr_id integer, tipo_rubro_id integer, recurso_cgr integer, origen_ingreso integer, destinacion integer, finalidad_gasto integer, situacion_fondos integer"
+	},
+	{
+		"table_name" : "pre_cierres_presupuestales",
+		"columnas" : "id integer, agno integer, mes integer, pre_plan_presupuestal_id integer, plan_inicial numeric, adiciones numeric, reducciones numeric, aplazamientos numeric, creditos numeric, contra_creditos numeric, reconocimientos numeric, recaudos numeric, disponibilidad numeric, compromiso numeric, obligacion numeric, pagado numeric, pac01 numeric, pac02 numeric, pac03 numeric, pac04 numeric, pac05 numeric, pac06 numeric, pac07 numeric, pac08 numeric, pac09 numeric, pac10 numeric, pac11 numeric, pac12 numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, liberaciones numeric, saldo_inicial numeric, saldo_final numeric"
+	},
+	{
+		"table_name" : "pre_cpcs",
+		"columnas" : "id integer, com_vigencia_id integer, pre_cpc_id integer, codigo character varying(40), nombre character varying(250), maneja_movimiento smallint, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "pre_detalles_presupuestales",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_tercero_id integer, com_centro_costo_id integer, pre_plan_presupuestal_id integer, descripcion text, com_proyecto_id integer, valor numeric, pac01 numeric, pac02 numeric, pac03 numeric, pac04 numeric, pac05 numeric, pac06 numeric, pac07 numeric, pac08 numeric, pac09 numeric, pac10 numeric, pac11 numeric, pac12 numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, documento_referencia_id integer, pre_fuente_financiamiento_id integer, saldo numeric, tipo_operacion smallint, pre_detalle_presupuestal_id integer, mes_rezago integer, documento_referencia_no_presupuestal_id integer, pre_cpc_id integer, maneja_cuatro_por_mil smallint, cuatro_por_mil numeric, subtotal numeric, saldo_subtotal numeric"
+	},
+	{
+		"table_name" : "pre_detalles_presupuestales_errores",
+		"columnas" : "id integer, com_encabezado_documento_id integer, mensaje text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "pre_fuentes_financiamientos",
+		"columnas" : "id integer, codigo character varying(45), nombre character varying(150), descripcion text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, tipo_recurso_id integer"
+	},
+	{
+		"table_name" : "pre_fuentes_financiamientos_planes_presupuestales",
+		"columnas" : "id integer, pre_fuente_financiamiento_id integer, pre_plan_presupuestal_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, agno integer"
+	},
+	{
+		"table_name" : "pre_fuentes_financiamientos_proyectos",
+		"columnas" : "id integer, pre_fuente_financiamiento_id integer, pre_proyecto_id integer, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "pre_interfaces_categorias",
+		"columnas" : "id integer, com_categoria_id integer, pre_fuente_financiamiento_id integer, agno integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_vigencia_id integer, prv_tipo_rubro_id integer, pre_plan_presupuestal_id integer"
+	},
+	{
+		"table_name" : "pre_interfaces_conceptos_nomina",
+		"columnas" : "id integer, nom_concepto_id integer, pre_plan_presupuestal_id integer, pre_fuente_financiamiento_id integer, agno integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "pre_interfaces_tipos_clientes",
+		"columnas" : "id integer, fac_tipo_cliente_id integer, pre_plan_presupuestal_vigencia_anterior_id integer, pre_plan_presupuestal_vigencia_actual_id integer, agno integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, pre_fuente_financiamiento_id integer"
+	},
+	{
+		"table_name" : "pre_pac_centros_costos",
+		"columnas" : "id integer, agno integer, pre_plan_presupuestal_id integer, com_centro_costo_id integer, pac01 numeric, pac02 numeric, pac03 numeric, pac04 numeric, pac05 numeric, pac06 numeric, pac07 numeric, pac08 numeric, pac09 numeric, pac10 numeric, pac11 numeric, pac12 numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "pre_planes_presupuestales",
+		"columnas" : "id integer, com_vigencia_id integer, tipo_rubro_id integer, codigo_rubro character varying(40), nombre_rubro text, pre_plan_presupuestal_id integer, maneja_movimiento smallint, plan_inicial numeric, adiciones numeric, reducciones numeric, aplazamientos numeric, creditos numeric, contra_creditos numeric, reconocimientos numeric, recaudos numeric, disponibilidad numeric, compromiso numeric, obligacion numeric, pagado numeric, pac01 numeric, pac02 numeric, pac03 numeric, pac04 numeric, pac05 numeric, pac06 numeric, pac07 numeric, pac08 numeric, pac09 numeric, pac10 numeric, pac11 numeric, pac12 numeric, homologacion_circular_unica character varying(10), pre_cgr_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, izquierda integer, derecha integer, solicitud numeric, agno integer, mes integer, nivel integer, vigencia_futura smallint, liberaciones numeric, maneja_cuatro_por_mil smallint, situacion_fondo smallint, politica_publica_id bigint, tipo_vigencia_id bigint"
+	},
+	{
+		"table_name" : "pre_planes_presupuestales_ingresos_gastos",
+		"columnas" : "id integer, pre_plan_presupuestal_ingreso_id integer, pre_plan_presupuestal_gasto_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, agno integer, mes integer, valor numeric"
+	},
+	{
+		"table_name" : "pre_procesos_logs",
+		"columnas" : "id integer, proceso character varying(250), numero_con_codigo_documento character varying(65), mensaje text, com_tercero_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, agno integer"
+	},
+	{
+		"table_name" : "pre_saldos_centros_costos",
+		"columnas" : "id integer, agno integer, mes integer, pre_plan_presupuestal_id integer, plan_inicial numeric, adiciones numeric, reducciones numeric, aplazamientos numeric, creditos numeric, contra_creditos numeric, reconocimientos numeric, recaudos numeric, disponibilidad numeric, compromiso numeric, obligacion numeric, pagado numeric, pac01 numeric, pac02 numeric, pac03 numeric, pac04 numeric, pac05 numeric, pac06 numeric, pac07 numeric, pac08 numeric, pac09 numeric, pac10 numeric, pac11 numeric, pac12 numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, liberaciones numeric, com_centro_costo_id integer"
+	},
+	{
+		"table_name" : "pre_saldos_fuentes_financiamientos",
+		"columnas" : "id integer, agno integer, mes integer, pre_plan_presupuestal_id integer, pre_fuente_financiamiento_id integer, plan_inicial numeric, adiciones numeric, reducciones numeric, aplazamientos numeric, liberaciones numeric, creditos numeric, contra_creditos numeric, reconocimientos numeric, recaudos numeric, disponibilidad numeric, compromiso numeric, obligacion numeric, pagado numeric, pac01 numeric, pac02 numeric, pac03 numeric, pac04 numeric, pac05 numeric, pac06 numeric, pac07 numeric, pac08 numeric, pac09 numeric, pac10 numeric, pac11 numeric, pac12 numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "pre_saldos_terceros",
+		"columnas" : "id integer, agno integer, mes integer, pre_plan_presupuestal_id integer, com_tercero_id integer, reconocimientos numeric, recaudos numeric, disponibilidad numeric, compromiso numeric, obligacion numeric, pagado numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "pre_usuarios_planes_presupuestales",
+		"columnas" : "id integer, user_id integer, pre_plan_presupuestal_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, agno integer"
+	},
+	{
+		"table_name" : "pregunta_opcion_pivote",
+		"columnas" : "id bigint, com_pregunta_formulario_dinamico_id bigint, com_opcion_respuesta_formulario_dinamico_id bigint, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "procesos",
+		"columnas" : "id integer, modulo character varying(100), nombre_proceso character varying(300), usuario character varying(100), estado character varying(20), created_at timestamp without time zone, updated_at timestamp without time zone, identificador character varying(30), progreso numeric, permite_ejecucion_concurrente integer, valida_identificador integer, bloquea_gestion integer, genera_notificacion integer, mensaje text, metadatos json"
+	},
+	{
+		"table_name" : "pruebas",
+		"columnas" : "id integer, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "prv_correos_radian",
+		"columnas" : "id integer, prv_empresas_id integer, correo_electronico character varying(255), host character varying(255), password text, estado boolean, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, last_sync_date timestamp without time zone"
+	},
+	{
+		"table_name" : "prv_empresas",
+		"columnas" : "id integer, prv_tipo_empresa_id integer, codigo character varying(25), nombre character varying(250), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, nombre_resumido character varying(191), com_tercero_id integer, seccion_presupuestal_id bigint, seccion_presupuestal_adicional_id bigint, sector_id bigint, nombre_software_fe character varying(250), software_id_fe character varying(250), test_id_fe character varying(250), pin_fe character varying(40), password text, tipo_mecanismo_proteccion smallint, reps smallint, url_apifevrips text"
+	},
+	{
+		"table_name" : "prv_listas_elementos",
+		"columnas" : "id integer, nombre text, descripcion text, metadatos json, prv_lista_tipo_id integer, prv_lista_elemento_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, favorito smallint, codigo character varying(50), activo smallint, traducciones json, maneja_presupuesto smallint"
+	},
+	{
+		"table_name" : "prv_listas_tipos",
+		"columnas" : "id integer, nombre character varying(50), descripcion character varying(500), prv_lista_tipo_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "prv_maestros_conceptos",
+		"columnas" : "id integer, activo smallint, nombre character varying(250), frecuencia_id integer, clase_id integer, entrada_id integer, redondeo_id integer, formula text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, grupo_id integer, afectado_por json, amortizable smallint, imagen_formula text, codigo character varying(20)"
+	},
+	{
+		"table_name" : "prv_maestros_documentos",
+		"columnas" : "id integer, prv_modulo_id integer, nombre character varying(150), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tipo_comprobante_id json, externos_asociados json, es_unico smallint, es_duplicable smallint, es_obligatoria_fecha_sistema smallint, numeracion_inicia_cada_vigencia smallint, afecta_contabilidad smallint, maestro_documento_referencia_no_presupuestal json, prv_maestro_documento_referencia_presupuestal_id integer, prv_maestro_documento_genera_afecta_presupuesto_id integer, activo smallint, tipo_maestro_id integer, prv_maestro_documento_genera_afecta_no_presupuestal_id integer"
+	},
+	{
+		"table_name" : "prv_modulos",
+		"columnas" : "id integer, nombre character varying(150), alias character varying(150), activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, tipo_modulo_id integer, aplicacion_id integer, directorio character varying(255), descripcion text, predeterminado integer, roles_id integer, icono_id integer"
+	},
+	{
+		"table_name" : "prv_modulos_objetos",
+		"columnas" : "id integer, es_epicrisis integer, ordenar integer, facturar integer, libre integer, orden_objeto smallint, orden_impresion smallint, activo_objeto integer, activo_impresion integer, com_tipo_actividad_id bigint, activo smallint, prv_modulo_id integer, prv_objeto_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "prv_motivos_operaciones_especiales",
+		"columnas" : "id integer, motivo text, tipo_operacion_especial_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "prv_objetos",
+		"columnas" : "id integer, codigo character varying(25), nombre character varying(250), descripcion text, hced integer, recibe_cargos integer, tipo_clase_id integer, formulario_dinamico_id integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, icono_id integer, componente_id integer, es_formulario_dinamico integer"
+	},
+	{
+		"table_name" : "prv_parametros",
+		"columnas" : "id integer, prv_modulo_id bigint, nombre character varying(255), descripcion text, valor1 text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, clase_parametro_id integer, tipo_dato_parametro_id integer, prv_parametro_seccion_id integer, codigo character varying(20), tipo_cuenta_id integer, tipo_rubro_id integer, valor2 character varying(255), con_plan_contable_id integer, pre_plan_presupuestal_id integer, activo smallint"
+	},
+	{
+		"table_name" : "prv_parametros_correos",
+		"columnas" : "id integer, smtp_url character varying(150), smtp_puerto integer, correo character varying(150), contrasena character varying(150), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "prv_parametros_secciones",
+		"columnas" : "id integer, prv_modulo_id integer, nombre character varying(150), descripcion text, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, orden integer, privado smallint"
+	},
+	{
+		"table_name" : "prv_tipo_concepto_salud",
+		"columnas" : "id integer, activo smallint, codigo character varying(50), nombre character varying(150), descripcion text, tipo_producto_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "prv_tipos_empresas",
+		"columnas" : "id integer, nombre character varying(150), descripcion character varying(500), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "reminders",
+		"columnas" : "id integer, user_id integer, code character varying(191), completed boolean, completed_at timestamp without time zone, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "resset_password",
+		"columnas" : "id integer, correo character varying(50), codigo character varying(6), activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "revisions",
+		"columnas" : "id integer, revisionable_type character varying(191), revisionable_id integer, user_id integer, key character varying(191), old_value text, new_value text, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "rol_objeto_permisos",
+		"columnas" : "id integer, user_id integer, prv_modulo_objeto_id integer, permisos json, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "role_users",
+		"columnas" : "user_id integer, role_id integer, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "roles",
+		"columnas" : "id integer, slug character varying(191), name character varying(191), permissions text, created_at timestamp without time zone, updated_at timestamp without time zone, is_system boolean, prv_empresa_id integer, deleted_at timestamp without time zone, activo smallint, codigo character varying(20), permisos_dinamicos text"
+	},
+	{
+		"table_name" : "roles_com_sedes_users",
+		"columnas" : "id integer, com_sede_user_id integer, role_id integer, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "setting__setting_translations",
+		"columnas" : "id integer, setting_id integer, locale character varying(191), value character varying(191), description text"
+	},
+	{
+		"table_name" : "setting__settings",
+		"columnas" : "id integer, name character varying(191), plainValue text, isTranslatable boolean, created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "tag__tag_translations",
+		"columnas" : "id integer, slug character varying(191), name character varying(191), tag_id integer, locale character varying(191)"
+	},
+	{
+		"table_name" : "tag__tagged",
+		"columnas" : "id integer, taggable_type character varying(191), taggable_id integer, tag_id integer"
+	},
+	{
+		"table_name" : "tag__tags",
+		"columnas" : "id integer, namespace character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "tes_caja_tes_cuentas_bancarias",
+		"columnas" : "id integer, tes_caja_id integer, tes_cuenta_bancaria_id integer, chequeado smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint"
+	},
+	{
+		"table_name" : "tes_cajas",
+		"columnas" : "id integer, codigo character varying(20), nombre character varying(150), operacion smallint, monto numeric, cuantia numeric, con_plan_contable_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, es_caja_menor integer, com_centro_costo_id integer"
+	},
+	{
+		"table_name" : "tes_cajas_responsables",
+		"columnas" : "id integer, tes_cajas_id integer, com_tercero_id integer, principal smallint, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "tes_chequeras",
+		"columnas" : "id integer, tes_cuenta_bancaria_id integer, fecha_expedicion timestamp without time zone, numero_inicial integer, numero_final integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, plantilla_cheque_id integer"
+	},
+	{
+		"table_name" : "tes_chequeras_detalles",
+		"columnas" : "id integer, tes_chequera_id integer, numero_cheque integer, estado_cheque_id integer, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, com_encabezado_documento_id integer, fecha_entrega_titulo_valor timestamp without time zone, persona_autorizada_documento character varying(20), persona_autorizada_nombre character varying(120), metadatos json, auditoria_cheque json, fecha date, beneficiario character varying(191), tes_cheque_referencia_id integer, impresion integer"
+	},
+	{
+		"table_name" : "tes_chequeras_operaciones_especiales",
+		"columnas" : "id integer, tes_detalle_chequera_id integer, concepto_anulacion_cheque_id integer, justificacion character varying(250), user_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, prv_motivo_operacion_especial_id integer"
+	},
+	{
+		"table_name" : "tes_conciliacion_bancaria",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_encabezado_documento_conciliado_id integer, tes_extracto_bancario_detalle_id integer, valor_conciliado numeric, con_plan_contable_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "tes_cuentas_bancarias",
+		"columnas" : "id integer, sucursal_id integer, tipo_cuenta_id integer, numero_cuenta character varying(25), con_plan_contable_id integer, maneja_sobregiro smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, acepta_transferencias smallint, fecha_expiracion timestamp without time zone, com_tercero_banco_id integer, franquicia_id integer, tes_cuentas_bancarias_id integer, tipo_fondo_id integer"
+	},
+	{
+		"table_name" : "tes_detalles_contabilidad",
+		"columnas" : "id integer, tes_detalle_comprobante_egreso_id integer, con_plan_contable_id integer, com_centro_costo_id integer, com_tercero_id integer, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, pre_proyecto_id integer, com_encabezado_documento_id integer, agno integer, mes integer, cos_recurso_id integer, com_encabezado_documento_referencia_id integer, descripcion text, valor_base numeric, com_impuesto_deduccion_id integer, porcentaje_impuesto_deduccion numeric, tipo_revelacion integer, revelacion integer, valor_trm numeric, valor_dolar numeric, estado_financiero integer"
+	},
+	{
+		"table_name" : "tes_detalles_cuentas_pagar",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_referencia_documento_id integer, com_tercero_id integer, com_centro_costo_id integer, com_producto_compuesto_id integer, com_producto_variante_id integer, tipo_moneda_id integer, tasa_cambio numeric, unitario_moneda_extranjera numeric, cantidad numeric, unitario numeric, descuento_porcentaje numeric, descuento_valor numeric, subtotal numeric, com_impuesto_deduccion_id integer, deduccion_valor numeric, total numeric, descripcion text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, tes_caja_id integer, valor_aiu numeric, com_documento_externo_id integer, numero_documento_externo character varying(250), fecha_documento_externo timestamp without time zone, ctr_contrato_id integer, valor_administracion numeric, valor_imprevistos numeric, valor_utilidad numeric"
+	},
+	{
+		"table_name" : "tes_detalles_giros",
+		"columnas" : "id integer, forma_pago_id integer, beneficiario character varying(150), tes_cajas_id integer, tes_cuentas_bancarias_id integer, tes_chequera_detalle_id integer, fecha timestamp without time zone, com_encabezado_documento_id integer, tipo_moneda_id integer, unitario_moneda_extranjera numeric, tasa_cambio numeric, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, numero_cuotas integer, metadatos json, com_tercero_beneficiario_id integer"
+	},
+	{
+		"table_name" : "tes_detalles_presupuestos",
+		"columnas" : "id integer, tes_detalle_comprobante_egreso_id integer, pre_detalle_presupuestal_id integer, valor numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, tipo_rubro integer, com_encabezado_documento_id integer, com_encabezado_documento_referencia_id integer"
+	},
+	{
+		"table_name" : "tes_detalles_tesoreria",
+		"columnas" : "id integer, com_encabezado_documento_id integer, com_referencia_documento_id integer, com_tercero1_id integer, descripcion text, deduccion_valor numeric, descuento_porcentaje numeric, descuento_valor numeric, subtotal numeric, total numeric, com_documento_presupuestal_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, activo smallint, valor_pagar numeric, tes_caja1_id integer, con_plan_contable_id integer, com_referencia_documento_deduccion_id integer, com_documento_externo_id integer, numero_documento_externo character varying(250), fecha_documento_externo timestamp without time zone, com_productos_variantes_id integer, cantidad numeric, tipo_moneda_id integer, unitario_moneda_extranjera numeric, tasa_cambio numeric, unitario numeric, tes_caja2_id integer, com_tercero2_id integer, ctr_contrato_id integer, tes_cuenta_bancaria_id integer, com_impuesto_deduccion_id integer, valor_aiu numeric, valor_administracion numeric, valor_imprevistos numeric, valor_utilidad numeric"
+	},
+	{
+		"table_name" : "tes_extractos_bancarios",
+		"columnas" : "id integer, com_tercero_banco_id integer, tes_cuenta_bancaria_id integer, fecha_inicial timestamp without time zone, fecha_final timestamp without time zone, saldo_inicial numeric, saldo_final numeric, valor numeric, valor_conciliado numeric, valor_no_conciliado numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, com_importador_id integer"
+	},
+	{
+		"table_name" : "tes_extractos_bancarios_detalles",
+		"columnas" : "id integer, tes_extracto_bancario_id integer, fecha timestamp without time zone, tipo_operacion_id integer, descripcion text, valor numeric, valor_conciliado numeric, valor_no_conciliado numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, clasificacion character varying(50), numero_documento_tercero character varying(20), documento_extracto character varying(20), numero_datafono character varying(20)"
+	},
+	{
+		"table_name" : "throttle",
+		"columnas" : "id integer, user_id integer, type character varying(191), ip character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone"
+	},
+	{
+		"table_name" : "thu_dependencias",
+		"columnas" : "id integer, codigo character varying(40), nombre character varying(80), ubicacion text, telefono json, nom_vinculacion_id integer, nivel integer, izquierda integer, derecha integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "thu_empleados_dotaciones_protecciones",
+		"columnas" : "id integer, com_tercero_id integer, com_producto_variante_id integer, com_atributo_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "thu_empleados_estudios",
+		"columnas" : "id integer, com_tercero_empleado_id integer, thu_nivel_estudio_id integer, institucion character varying(191), modalidad_programa_id integer, titulo character varying(191), fecha_inicial date, fecha_final date, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, numero_tarjeta_profesional character varying(50), fecha_expedicion_tarjeta_profesional date, municipio_estudio_id integer, semestres_aprobados smallint, convalidado integer, resolucion_convalidacion character varying(50), fecha_convalidacion date, fecha_vencimiento_tarjeta_profesional date, fecha_grado date, pais_institucion_id integer, aca_institucion_snies_id integer"
+	},
+	{
+		"table_name" : "thu_empleados_familiares",
+		"columnas" : "id integer, com_tercero_empleado_id integer, nombre_apellido character varying(255), fecha_nacimiento date, parentesco_id integer, a_cargo integer, vivo smallint, convive smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, dependiente_retencion_fuente smallint"
+	},
+	{
+		"table_name" : "thu_empleados_historias_laborales",
+		"columnas" : "id integer, com_tercero_empleado_id integer, empresa character varying(191), telefono json, cargo character varying(191), tipo_contrato_id integer, fecha_inicio date, fecha_final date, jefe_inmediato text, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone, es_publico smallint, pais_id integer, municipio_id integer, correo_entidad character varying(191), direccion text, dependencia character varying(191)"
+	},
+	{
+		"table_name" : "thu_evaluaciones",
+		"columnas" : "id integer, thu_programa_evaluacion_id integer, tipo_evaluacion_id integer, com_formulario_id integer, fecha_inicial timestamp without time zone, fecha_final timestamp without time zone, calificacion integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "thu_evaluaciones_respuestas",
+		"columnas" : "id integer, thu_evaluacion_id integer, com_formulario_pregunta_id integer, fecha_respuesta timestamp without time zone, com_formulario_respuesta_id integer, respuesta character varying(100), calificacion1 smallint, calificacion2 smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "thu_grupos",
+		"columnas" : "id integer, tipo_grupo_id integer, nombre character varying(150), activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "thu_grupos_detalles",
+		"columnas" : "id integer, thu_grupo_id integer, com_tercero_usuario_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "thu_grupos_usuarios",
+		"columnas" : "id integer, nombre character varying(191), tipo_usuarios_id integer, usuarios json, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "thu_idiomas_empleados",
+		"columnas" : "id integer, idioma_id integer, com_tercero_empleado_id integer, categoria_idioma_id integer, nivel_id integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "thu_niveles_estudios",
+		"columnas" : "id bigint, codigo character varying(20), nombre character varying(191), clasificacion_docente smallint, nivel integer, activo smallint, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "thu_programas_evaluaciones",
+		"columnas" : "id integer, com_dependencia_id integer, nom_cargo_id integer, com_tercero_evaluado_id integer, nom_vinculacion_id integer, com_tercero_evaluador_id integer, com_formulario_id integer, puntaje_maximo integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "thu_programas_evaluaciones_detalles",
+		"columnas" : "id integer, thu_programa_evaluacion_id integer, fecha_inicial date, fecha_final date, fecha_notificacion date, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "thu_programas_evaluaciones_porcentajes",
+		"columnas" : "id integer, thu_programa_evaluacion_id integer, com_formulario_seccion_id integer, com_formulario_categoria_id integer, porcentaje numeric, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "thu_resultados_historicos",
+		"columnas" : "id integer, com_dependencia_id integer, nom_cargo_id integer, com_tercero_empleado_id integer, nom_vinculacion_id integer, thu_programa_evaluacion_id integer, com_formulario_seccion_id integer, com_formulario_categoria_id integer, calificacion integer, created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "translation__translation_translations",
+		"columnas" : "id integer, value text, translation_id integer, locale character varying(191)"
+	},
+	{
+		"table_name" : "translation__translations",
+		"columnas" : "id integer, key character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	},
+	{
+		"table_name" : "user_tokens",
+		"columnas" : "id integer, user_id integer, access_token text, created_at timestamp without time zone, updated_at timestamp without time zone, configuracion json"
+	},
+	{
+		"table_name" : "users",
+		"columnas" : "id integer, email character varying(191), password character varying(191), permissions text, last_login timestamp without time zone, first_name character varying(191), last_name character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone, com_tercero_id integer, configuración json, deleted_at timestamp without time zone, activo smallint, bloqueado smallint, intentos_fallidos smallint, last_update_password date, expire_password date, name character varying(255), username character varying(255), modo_ingreso_id integer"
+	},
+	{
+		"table_name" : "users_tipos_operaciones_especiales",
+		"columnas" : "id integer, user_id integer, tipo_operacion_especial_id integer, password character varying(191), created_at timestamp without time zone, updated_at timestamp without time zone, deleted_at timestamp without time zone"
+	}
+]}

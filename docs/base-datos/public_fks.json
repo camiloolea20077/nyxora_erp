@@ -1,0 +1,1403 @@
+{
+"SELECT \r\n    tc.table_name,\r\n    kcu.column_name,\r\n    ccu.table_name AS ref_table,\r\n    ccu.column_name AS ref_column,\r\n    tc.constraint_name\r\nFROM information_schema.table_constraints tc\r\nJOIN information_schema.key_column_usage kcu \r\n    ON kcu.constraint_name = tc.constraint_name \r\n   AND kcu.table_schema = tc.table_schema\r\nJOIN information_schema.constraint_column_usage ccu \r\n    ON ccu.constraint_name = tc.constraint_name \r\n   AND ccu.table_schema = tc.table_schema\r\nWHERE tc.constraint_type = 'FOREIGN KEY'\r\n  AND tc.table_schema = 'public'\r\nORDER BY tc.table_name, kcu.column_name": [
+	{
+		"table_name" : "aca_asignaturas_programas",
+		"column_name" : "aca_asignatura_id",
+		"ref_table" : "aca_asignaturas",
+		"ref_column" : "id",
+		"constraint_name" : "aca_asignaturas_programas_aca_asignatura_id_foreign"
+	},
+	{
+		"table_name" : "aca_asignaturas_programas",
+		"column_name" : "aca_programa_academico_id",
+		"ref_table" : "aca_programas_academicos",
+		"ref_column" : "id",
+		"constraint_name" : "aca_asignaturas_programas_aca_programa_academico_id_foreign"
+	},
+	{
+		"table_name" : "aca_cargas_academicas",
+		"column_name" : "nom_vinculacion_id",
+		"ref_table" : "nom_vinculaciones",
+		"ref_column" : "id",
+		"constraint_name" : "aca_cargas_academicas_nom_vinculacion_id_foreign"
+	},
+	{
+		"table_name" : "aca_cargas_academicas",
+		"column_name" : "thu_nivel_estudio_id",
+		"ref_table" : "thu_niveles_estudios",
+		"ref_column" : "id",
+		"constraint_name" : "aca_cargas_academicas_thu_nivel_estudio_id_foreign"
+	},
+	{
+		"table_name" : "aca_cargas_academicas_detalles",
+		"column_name" : "aca_asignatura_programa_id",
+		"ref_table" : "aca_asignaturas_programas",
+		"ref_column" : "id",
+		"constraint_name" : "aca_detalles_cargas_academicas_aca_asignatura_programa_id_forei"
+	},
+	{
+		"table_name" : "aca_cargas_academicas_detalles",
+		"column_name" : "aca_carga_academica_id",
+		"ref_table" : "aca_cargas_academicas",
+		"ref_column" : "id",
+		"constraint_name" : "aca_detalles_cargas_academicas_aca_carga_academica_id_foreign"
+	},
+	{
+		"table_name" : "aca_cargas_academicas_novedades",
+		"column_name" : "aca_carga_academica_id",
+		"ref_table" : "aca_cargas_academicas",
+		"ref_column" : "id",
+		"constraint_name" : "aca_cargas_academicas_novedades_aca_carga_academica_id_foreign"
+	},
+	{
+		"table_name" : "aca_grupos_academicos",
+		"column_name" : "aca_programa_id",
+		"ref_table" : "aca_programas_academicos",
+		"ref_column" : "id",
+		"constraint_name" : "aca_grupos_academicos_aca_programa_id_foreign"
+	},
+	{
+		"table_name" : "aca_grupos_academicos",
+		"column_name" : "com_vigencia_id",
+		"ref_table" : "com_vigencias",
+		"ref_column" : "id",
+		"constraint_name" : "aca_grupos_academicos_com_vigencia_id_foreign"
+	},
+	{
+		"table_name" : "aca_programas_academicos",
+		"column_name" : "modalidad_programa_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "aca_programas_academicos_modalidad_programa_id_foreign"
+	},
+	{
+		"table_name" : "aca_programas_academicos",
+		"column_name" : "tipo_programa_academico_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "aca_programas_academicos_tipo_programa_academico_id_foreign"
+	},
+	{
+		"table_name" : "aca_tipos_docentes_catedras",
+		"column_name" : "modalidad_programa_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "aca_tipos_docentes_catedras_modalidad_programa_id_foreign"
+	},
+	{
+		"table_name" : "aca_tipos_docentes_catedras",
+		"column_name" : "tipo_empleado_catedra_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "aca_tipos_docentes_catedras_tipo_empleado_catedra_id_foreign"
+	},
+	{
+		"table_name" : "acf_activos_fijos",
+		"column_name" : "com_tercero_id",
+		"ref_table" : "com_terceros",
+		"ref_column" : "id",
+		"constraint_name" : "acf_activos_fijos_com_tercero_id_foreign"
+	},
+	{
+		"table_name" : "acf_activos_fijos",
+		"column_name" : "inv_bodega_id",
+		"ref_table" : "inv_bodegas",
+		"ref_column" : "id",
+		"constraint_name" : "acf_activos_fijos_inv_bodega_id_foreign"
+	},
+	{
+		"table_name" : "acf_activos_fijos",
+		"column_name" : "inv_marca_id",
+		"ref_table" : "inv_marcas",
+		"ref_column" : "id",
+		"constraint_name" : "acf_activos_fijos_inv_marca_id_foreign"
+	},
+	{
+		"table_name" : "acf_activos_fijos",
+		"column_name" : "unidad_mayor_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "acf_activos_fijos_unidad_mayor_id_foreign"
+	},
+	{
+		"table_name" : "acf_cierres",
+		"column_name" : "acf_activo_fijo_id",
+		"ref_table" : "acf_activos_fijos",
+		"ref_column" : "id",
+		"constraint_name" : "acf_cierres_acf_activo_fijo_id_foreign"
+	},
+	{
+		"table_name" : "acf_detalles_depreciaciones",
+		"column_name" : "acf_activo_fijo_id",
+		"ref_table" : "acf_activos_fijos",
+		"ref_column" : "id",
+		"constraint_name" : "acf_detalles_depreciaciones_acf_activo_fijo_id_foreign"
+	},
+	{
+		"table_name" : "acf_detalles_depreciaciones",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "acf_detalles_depreciaciones_com_encabezado_documento_id_foreign"
+	},
+	{
+		"table_name" : "acf_detalles_polizas_seguros",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "acf_detalles_polizas_seguros_com_encabezado_documento_id_foreig"
+	},
+	{
+		"table_name" : "acf_detalles_polizas_seguros",
+		"column_name" : "seguros_amparos_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "acf_detalles_polizas_seguros_seguros_amparos_id_foreign"
+	},
+	{
+		"table_name" : "acf_detalles_polizas_seguros",
+		"column_name" : "unidad_tiempo_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "acf_detalles_polizas_seguros_unidad_tiempo_id_foreign"
+	},
+	{
+		"table_name" : "acf_polizas_seguros",
+		"column_name" : "acf_activo_fijo_id",
+		"ref_table" : "acf_activos_fijos",
+		"ref_column" : "id",
+		"constraint_name" : "acf_polizas_seguros_acf_activo_fijo_id_foreign"
+	},
+	{
+		"table_name" : "acf_polizas_seguros",
+		"column_name" : "acf_poliza_seguro_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "acf_polizas_seguros_acf_poliza_seguro_id_foreign"
+	},
+	{
+		"table_name" : "acf_responsables_activos_fijos",
+		"column_name" : "acf_activo_fijo_id",
+		"ref_table" : "acf_activos_fijos",
+		"ref_column" : "id",
+		"constraint_name" : "acf_responsables_activos_fijos_acf_activo_fijo_id_foreign"
+	},
+	{
+		"table_name" : "acf_responsables_activos_fijos",
+		"column_name" : "com_tercero_id",
+		"ref_table" : "com_terceros",
+		"ref_column" : "id",
+		"constraint_name" : "acf_responsables_activos_fijos_com_tercero_id_foreign"
+	},
+	{
+		"table_name" : "adm_cierres_mes",
+		"column_name" : "com_vigencia_id",
+		"ref_table" : "com_vigencias",
+		"ref_column" : "id",
+		"constraint_name" : "adm_cierres_mes_com_vigencia_id_foreign"
+	},
+	{
+		"table_name" : "adm_cierres_mes",
+		"column_name" : "mes_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "adm_cierres_mes_mes_id_foreign"
+	},
+	{
+		"table_name" : "adm_cierres_mes",
+		"column_name" : "prv_modulo_id",
+		"ref_table" : "prv_modulos",
+		"ref_column" : "id",
+		"constraint_name" : "adm_cierres_mes_prv_modulo_id_foreign"
+	},
+	{
+		"table_name" : "adm_cierres_mes",
+		"column_name" : "tipo_cierre_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "adm_cierres_mes_tipo_cierre_id_foreign"
+	},
+	{
+		"table_name" : "adm_cierres_mes",
+		"column_name" : "user_id",
+		"ref_table" : "users",
+		"ref_column" : "id",
+		"constraint_name" : "adm_cierres_mes_user_id_foreign"
+	},
+	{
+		"table_name" : "adm_flujos_trabajos",
+		"column_name" : "com_documento_destino_id",
+		"ref_table" : "com_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "adm_flujos_trabajos_com_documento_destino_id_foreign"
+	},
+	{
+		"table_name" : "adm_flujos_trabajos",
+		"column_name" : "com_documento_origen_id",
+		"ref_table" : "com_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "adm_flujos_trabajos_com_documento_origen_id_foreign"
+	},
+	{
+		"table_name" : "adm_flujos_trabajos",
+		"column_name" : "usuario_destino_id",
+		"ref_table" : "users",
+		"ref_column" : "id",
+		"constraint_name" : "adm_flujos_trabajos_usuario_destino_id_foreign"
+	},
+	{
+		"table_name" : "adm_flujos_trabajos",
+		"column_name" : "usuario_origen_id",
+		"ref_table" : "users",
+		"ref_column" : "id",
+		"constraint_name" : "adm_flujos_trabajos_usuario_origen_id_foreign"
+	},
+	{
+		"table_name" : "audits_login",
+		"column_name" : "user_id",
+		"ref_table" : "users",
+		"ref_column" : "id",
+		"constraint_name" : "audits_login_user_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_cajas",
+		"column_name" : "nom_detalle_liquidacion_id",
+		"ref_table" : "nom_detalles_liquidaciones",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_cajas_nom_detalle_liquidacion_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_contabilidad",
+		"column_name" : "caj_detalle_caja_id",
+		"ref_table" : "caj_detalles_cajas",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_contabilidad_caj_detalle_caja_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_contabilidad",
+		"column_name" : "caj_detalle_recaudo_id",
+		"ref_table" : "caj_detalles_recaudos",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_contabilidad_caj_detalle_recaudo_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_contabilidad",
+		"column_name" : "com_centro_costo_id",
+		"ref_table" : "com_centros_costos",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_contabilidad_com_centro_costo_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_contabilidad",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_contabilidad_com_encabezado_documento_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_contabilidad",
+		"column_name" : "com_encabezado_documento_referencia_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_contabilidad_com_encabezado_documento_referencia_i"
+	},
+	{
+		"table_name" : "caj_detalles_contabilidad",
+		"column_name" : "com_impuesto_deduccion_id",
+		"ref_table" : "com_impuestos_deducciones",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_contabilidad_com_impuesto_deduccion_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_contabilidad",
+		"column_name" : "com_proyecto_id",
+		"ref_table" : "com_proyectos",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_contabilidad_com_proyecto_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_contabilidad",
+		"column_name" : "com_tercero_id",
+		"ref_table" : "com_terceros",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_contabilidad_com_tercero_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_contabilidad",
+		"column_name" : "con_plan_contable_id",
+		"ref_table" : "con_plan_contable",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_contabilidad_con_plan_contable_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_contabilidad",
+		"column_name" : "cos_recurso_id",
+		"ref_table" : "cos_recursos",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_contabilidad_cos_recurso_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_presupuestales",
+		"column_name" : "tipo_rubro",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_presupuestales_tipo_rubro_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_recaudos",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_recaudos_com_encabezado_documento_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_recaudos",
+		"column_name" : "com_tercero_id",
+		"ref_table" : "com_terceros",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_recaudos_com_tercero_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_recaudos",
+		"column_name" : "forma_pago_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_recaudos_forma_pago_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_recaudos",
+		"column_name" : "tes_caja_id",
+		"ref_table" : "tes_cajas",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_recaudos_tes_caja_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_recaudos",
+		"column_name" : "tes_chequera_detalle_id",
+		"ref_table" : "tes_chequeras_detalles",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_recaudos_tes_chequera_detalle_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_recaudos",
+		"column_name" : "tes_cuenta_bancaria_id",
+		"ref_table" : "tes_cuentas_bancarias",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_recaudos_tes_cuenta_bancaria_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_recaudos",
+		"column_name" : "tipo_moneda_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_recaudos_tipo_moneda_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_recibos_caja",
+		"column_name" : "com_documento_referencia_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_recibos_caja_com_documento_referencia_id_foreign"
+	},
+	{
+		"table_name" : "caj_detalles_recibos_caja",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "caj_detalles_recibos_caja_com_encabezado_documento_id_foreign"
+	},
+	{
+		"table_name" : "cmp_comparativos_productos",
+		"column_name" : "com_encabezado_documento_cotizacion_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_comparativos_productos_com_encabezado_documento_cotizacion_"
+	},
+	{
+		"table_name" : "cmp_comparativos_productos",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_comparativos_productos_com_encabezado_documento_id_foreign"
+	},
+	{
+		"table_name" : "cmp_comparativos_productos",
+		"column_name" : "com_producto_id",
+		"ref_table" : "com_productos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_comparativos_productos_com_producto_id_foreign"
+	},
+	{
+		"table_name" : "cmp_comparativos_productos",
+		"column_name" : "com_producto_variante_id",
+		"ref_table" : "com_productos_variantes",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_comparativos_productos_com_producto_variante_id_foreign"
+	},
+	{
+		"table_name" : "cmp_comparativos_productos",
+		"column_name" : "inv_detalle_cotizacion_id",
+		"ref_table" : "inv_detalles_inventarios",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_comparativos_productos_inv_detalle_cotizacion_id_foreign"
+	},
+	{
+		"table_name" : "cmp_cuadros_comparativos_detalles",
+		"column_name" : "com_encabezado_documento_cotizacion_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_cuadros_comparativos_detalles_com_encabezado_documento_coti"
+	},
+	{
+		"table_name" : "cmp_cuadros_comparativos_detalles",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_cuadros_comparativos_detalles_com_encabezado_documento_id_f"
+	},
+	{
+		"table_name" : "cmp_cuadros_comparativos_detalles",
+		"column_name" : "com_producto_id",
+		"ref_table" : "com_productos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_cuadros_comparativos_detalles_com_producto_id_foreign"
+	},
+	{
+		"table_name" : "cmp_cuadros_comparativos_detalles",
+		"column_name" : "com_producto_variante_id",
+		"ref_table" : "com_productos_variantes",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_cuadros_comparativos_detalles_com_producto_variante_id_fore"
+	},
+	{
+		"table_name" : "cmp_cuadros_comparativos_detalles",
+		"column_name" : "inv_detalle_cotizacion_id",
+		"ref_table" : "inv_detalles_inventarios",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_cuadros_comparativos_detalles_inv_detalle_cotizacion_id_for"
+	},
+	{
+		"table_name" : "cmp_estudios_previos_ponderacion",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_estudios_previos_ponderacion_com_encabezado_documento_id_fo"
+	},
+	{
+		"table_name" : "cmp_estudios_previos_ponderacion",
+		"column_name" : "tipo_criterio_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_estudios_previos_ponderacion_tipo_criterio_id_foreign"
+	},
+	{
+		"table_name" : "cmp_estudios_previos_riesgos",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_estudios_previos_riesgos_com_encabezado_documento_id_foreig"
+	},
+	{
+		"table_name" : "cmp_estudios_previos_riesgos",
+		"column_name" : "tipo_riesgo_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_estudios_previos_riesgos_tipo_riesgo_id_foreign"
+	},
+	{
+		"table_name" : "cmp_estudios_previos_riesgos",
+		"column_name" : "valor_riesgo_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_estudios_previos_riesgos_valor_riesgo_id_foreign"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones",
+		"column_name" : "com_categorias_id",
+		"ref_table" : "com_categorias",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_planes_adquisiciones_com_categorias_id_foreign"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones",
+		"column_name" : "com_centro_costo_id",
+		"ref_table" : "com_centros_costos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_planes_adquisiciones_com_centro_costo_id_foreign"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones",
+		"column_name" : "com_vigencia_id",
+		"ref_table" : "com_vigencias",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_planes_adquisiciones_com_vigencia_id_foreign"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones_detalles",
+		"column_name" : "causales_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_planes_adquisiciones_detalles_causales_id_foreign"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones_detalles",
+		"column_name" : "com_categorias_id",
+		"ref_table" : "com_categorias",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_planes_adquisiciones_detalles_com_categorias_id_foreign"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones_detalles",
+		"column_name" : "com_centro_costo_id",
+		"ref_table" : "com_centros_costos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_planes_adquisiciones_detalles_com_centro_costo_id_foreign"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones_detalles",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_planes_adquisiciones_detalles_com_encabezado_documento_id_f"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones_detalles",
+		"column_name" : "ctr_modalidades_id",
+		"ref_table" : "ctr_modalidades",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_planes_adquisiciones_detalles_ctr_modalidades_id_foreign"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones_detalles",
+		"column_name" : "estado_vigencia_futura_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_planes_adquisiciones_detalles_estado_vigencia_futura_id_for"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones_detalles",
+		"column_name" : "pre_fuente_financiamiento_id",
+		"ref_table" : "pre_fuentes_financiamientos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_planes_adquisiciones_detalles_pre_fuente_financiamiento_id_"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones_detalles",
+		"column_name" : "tipo_contrato_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_planes_adquisiciones_detalles_tipo_contrato_id_foreign"
+	},
+	{
+		"table_name" : "cmp_planes_adquisiciones_detalles",
+		"column_name" : "unidad_tiempo_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_planes_adquisiciones_detalles_unidad_tiempo_id_foreign"
+	},
+	{
+		"table_name" : "cmp_requisitos_habilitantes",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_requisitos_habilitantes_com_encabezado_documento_id_foreign"
+	},
+	{
+		"table_name" : "cmp_requisitos_habilitantes",
+		"column_name" : "requisito_habilitante_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "cmp_requisitos_habilitantes_requisito_habilitante_id_foreign"
+	},
+	{
+		"table_name" : "com_actos_administrativos",
+		"column_name" : "com_documento_id",
+		"ref_table" : "com_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "com_actos_administrativos_com_documento_id_foreign"
+	},
+	{
+		"table_name" : "com_actos_administrativos",
+		"column_name" : "com_vigencia_id",
+		"ref_table" : "com_vigencias",
+		"ref_column" : "id",
+		"constraint_name" : "com_actos_administrativos_com_vigencia_id_foreign"
+	},
+	{
+		"table_name" : "com_actos_administrativos",
+		"column_name" : "prv_empresa_id",
+		"ref_table" : "prv_empresas",
+		"ref_column" : "id",
+		"constraint_name" : "com_actos_administrativos_prv_empresa_id_foreign"
+	},
+	{
+		"table_name" : "com_actos_administrativos",
+		"column_name" : "prv_modulo_id",
+		"ref_table" : "prv_modulos",
+		"ref_column" : "id",
+		"constraint_name" : "com_actos_administrativos_prv_modulo_id_foreign"
+	},
+	{
+		"table_name" : "com_actos_administrativos",
+		"column_name" : "tipo_acto_administrativo_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_actos_administrativos_tipo_acto_administrativo_id_foreign"
+	},
+	{
+		"table_name" : "com_apertura_vigencia",
+		"column_name" : "com_tercero_id",
+		"ref_table" : "com_terceros",
+		"ref_column" : "id",
+		"constraint_name" : "com_apertura_vigencia_com_tercero_id_foreign"
+	},
+	{
+		"table_name" : "com_apertura_vigencia",
+		"column_name" : "com_vigencia_destino_id",
+		"ref_table" : "com_vigencias",
+		"ref_column" : "id",
+		"constraint_name" : "com_apertura_vigencia_com_vigencia_destino_id_foreign"
+	},
+	{
+		"table_name" : "com_apertura_vigencia",
+		"column_name" : "com_vigencia_origen_id",
+		"ref_table" : "com_vigencias",
+		"ref_column" : "id",
+		"constraint_name" : "com_apertura_vigencia_com_vigencia_origen_id_foreign"
+	},
+	{
+		"table_name" : "com_apertura_vigencia",
+		"column_name" : "estado_proceso_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_apertura_vigencia_estado_proceso_id_foreign"
+	},
+	{
+		"table_name" : "com_apertura_vigencia",
+		"column_name" : "prv_modulo_id",
+		"ref_table" : "prv_modulos",
+		"ref_column" : "id",
+		"constraint_name" : "com_apertura_vigencia_prv_modulo_id_foreign"
+	},
+	{
+		"table_name" : "com_apertura_vigencia_detalle",
+		"column_name" : "apertura_vigencia_id",
+		"ref_table" : "com_apertura_vigencia",
+		"ref_column" : "id",
+		"constraint_name" : "com_apertura_vigencia_detalle_apertura_vigencia_id_foreign"
+	},
+	{
+		"table_name" : "com_apertura_vigencia_detalle",
+		"column_name" : "com_tercero_id",
+		"ref_table" : "com_terceros",
+		"ref_column" : "id",
+		"constraint_name" : "com_apertura_vigencia_detalle_com_tercero_id_foreign"
+	},
+	{
+		"table_name" : "com_apertura_vigencia_detalle",
+		"column_name" : "estado_proceso_id",
+		"ref_table" : "procesos",
+		"ref_column" : "id",
+		"constraint_name" : "com_apertura_vigencia_detalle_estado_proceso_id_foreign"
+	},
+	{
+		"table_name" : "com_categorias",
+		"column_name" : "clase_categoria_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_categorias_clase_categoria_id_foreign"
+	},
+	{
+		"table_name" : "com_categorias",
+		"column_name" : "com_categoria_id",
+		"ref_table" : "com_categorias",
+		"ref_column" : "id",
+		"constraint_name" : "inv_categorias_inv_categoria_id_foreign"
+	},
+	{
+		"table_name" : "com_categorias",
+		"column_name" : "con_plan_contable_activo_fijo_depreciacion_mantenimiento_id",
+		"ref_table" : "con_plan_contable",
+		"ref_column" : "id",
+		"constraint_name" : "com_categorias_con_plan_contable_activo_fijo_depreciacion_mante"
+	},
+	{
+		"table_name" : "com_categorias",
+		"column_name" : "con_plan_contable_activo_fijo_depreciacion_no_explotado_id",
+		"ref_table" : "con_plan_contable",
+		"ref_column" : "id",
+		"constraint_name" : "com_categorias_con_plan_contable_activo_fijo_depreciacion_no_ex"
+	},
+	{
+		"table_name" : "com_categorias",
+		"column_name" : "con_plan_contable_activo_fijo_mantenimiento_id",
+		"ref_table" : "con_plan_contable",
+		"ref_column" : "id",
+		"constraint_name" : "com_categorias_con_plan_contable_activo_fijo_mantenimiento_id_f"
+	},
+	{
+		"table_name" : "com_categorias",
+		"column_name" : "con_plan_contable_activo_fijo_no_explotado_id",
+		"ref_table" : "con_plan_contable",
+		"ref_column" : "id",
+		"constraint_name" : "com_categorias_con_plan_contable_activo_fijo_no_explotado_id_fo"
+	},
+	{
+		"table_name" : "com_categorias",
+		"column_name" : "metodo_costeo_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "inv_categorias_metodo_costeo_id_foreign"
+	},
+	{
+		"table_name" : "com_categorias",
+		"column_name" : "orden_operacion_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "inv_categorias_orden_operacion_id_foreign"
+	},
+	{
+		"table_name" : "com_categorias",
+		"column_name" : "pre_cpc_id",
+		"ref_table" : "pre_cpcs",
+		"ref_column" : "id",
+		"constraint_name" : "com_categorias_pre_cpc_id_foreign"
+	},
+	{
+		"table_name" : "com_categorias",
+		"column_name" : "tipo_depreciacion_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "inv_categorias_tipo_depreciacion_id_foreign"
+	},
+	{
+		"table_name" : "com_categorias",
+		"column_name" : "tipo_producto_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "inv_categorias_tipo_producto_id_foreign"
+	},
+	{
+		"table_name" : "com_categorias",
+		"column_name" : "valoracion_inventario_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "inv_categorias_valoracion_inventario_id_foreign"
+	},
+	{
+		"table_name" : "com_categorias_centros_costos",
+		"column_name" : "com_categoria_id",
+		"ref_table" : "com_categorias",
+		"ref_column" : "id",
+		"constraint_name" : "inv_categorias_centros_costos_inv_categoria_id_foreign"
+	},
+	{
+		"table_name" : "com_categorias_centros_costos",
+		"column_name" : "com_centro_costo_id",
+		"ref_table" : "com_centros_costos",
+		"ref_column" : "id",
+		"constraint_name" : "inv_categorias_centros_costos_com_centro_costo_id_foreign"
+	},
+	{
+		"table_name" : "com_centros_costos",
+		"column_name" : "clase_servicio_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_centros_costos_clase_servicio_id_foreign"
+	},
+	{
+		"table_name" : "com_centros_costos",
+		"column_name" : "com_centro_costo_id",
+		"ref_table" : "com_centros_costos",
+		"ref_column" : "id",
+		"constraint_name" : "com_centros_costos_com_centro_costo_id_foreign"
+	},
+	{
+		"table_name" : "com_centros_costos",
+		"column_name" : "com_sede_id",
+		"ref_table" : "com_sedes",
+		"ref_column" : "id",
+		"constraint_name" : "com_centros_costos_com_sede_id_foreign"
+	},
+	{
+		"table_name" : "com_centros_costos",
+		"column_name" : "com_tercero_id",
+		"ref_table" : "com_terceros",
+		"ref_column" : "id",
+		"constraint_name" : "com_centros_costos_com_tercero_id_foreign"
+	},
+	{
+		"table_name" : "com_centros_costos",
+		"column_name" : "tipo_atencion_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_centros_costos_tipo_atencion_id_foreign"
+	},
+	{
+		"table_name" : "com_centros_costos",
+		"column_name" : "tipo_centro_costo_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_centros_costos_tipo_centro_costo_id_foreign"
+	},
+	{
+		"table_name" : "com_centros_costos",
+		"column_name" : "unidad_negocio_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "fklwws58555np6t9499ehwdscow"
+	},
+	{
+		"table_name" : "com_columnas_seccion_formularios_dinamicos",
+		"column_name" : "com_formulario_dinamico_id",
+		"ref_table" : "com_formularios_dinamicos",
+		"ref_column" : "id",
+		"constraint_name" : "com_columnas_seccion_formularios_dinamicos_com_formulario_dinam"
+	},
+	{
+		"table_name" : "com_dependencias",
+		"column_name" : "com_centro_costo_id",
+		"ref_table" : "com_centros_costos",
+		"ref_column" : "id",
+		"constraint_name" : "com_dependencias_com_centro_costo_id_foreign"
+	},
+	{
+		"table_name" : "com_detalles_columnas_seccion_formularios_dinamicos",
+		"column_name" : "com_columnas_seccion_formulario_id",
+		"ref_table" : "com_columnas_seccion_formularios_dinamicos",
+		"ref_column" : "id",
+		"constraint_name" : "com_detalles_columnas_seccion_formularios_dinamicos_com_columna"
+	},
+	{
+		"table_name" : "com_documentos",
+		"column_name" : "fac_resolucion_facturacion_id",
+		"ref_table" : "fac_resoluciones_facturacion",
+		"ref_column" : "id",
+		"constraint_name" : "com_documentos_fac_resoluciones_facturacion_fk"
+	},
+	{
+		"table_name" : "com_documentos",
+		"column_name" : "prv_empresa_id",
+		"ref_table" : "prv_empresas",
+		"ref_column" : "id",
+		"constraint_name" : "com_documentos_prv_empresa_id_foreign"
+	},
+	{
+		"table_name" : "com_documentos",
+		"column_name" : "prv_maestro_documento_id",
+		"ref_table" : "prv_maestros_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "com_documentos_prv_maestro_documento_id_foreign"
+	},
+	{
+		"table_name" : "com_edades_cuentas",
+		"column_name" : "tipo_edad_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_edades_cuentas_tipo_edad_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "categoria_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_categoria_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "com_centro_costo2_id",
+		"ref_table" : "com_centros_costos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_com_centro_costo2_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "com_centro_costo_egreso_id",
+		"ref_table" : "com_centros_costos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_com_centro_costo_egreso_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "com_centro_costo_id",
+		"ref_table" : "com_centros_costos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_com_centro_costo_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "com_documento_externo_id",
+		"ref_table" : "com_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_com_documento_externo_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "com_documento_id",
+		"ref_table" : "com_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_com_documento_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "com_sede2_id",
+		"ref_table" : "com_sedes",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_com_sede2_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "com_sede_id",
+		"ref_table" : "com_sedes",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_com_sede_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "com_tercero1_id",
+		"ref_table" : "com_terceros",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_com_tercero1_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "com_tercero2_id",
+		"ref_table" : "com_terceros",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_com_tercero2_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "com_vigencia_id",
+		"ref_table" : "com_vigencias",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_com_vigencia_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "condicion_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_condicion_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "discapacidad_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_discapacidad_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "documento_referencia_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_documento_referencia_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "fac_contrato_id",
+		"ref_table" : "fac_contratos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_fac_contrato_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "genero_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_genero_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "grupo_atencion_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_grupo_atencion_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "prv_empresa_id",
+		"ref_table" : "prv_empresas",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_prv_empresa_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "regimen_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_regimen_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "tipo_afiliacion_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_tipo_afiliacion_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos",
+		"column_name" : "vigencia_presupuestal_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_vigencia_presupuestal_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_centros_costos",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_centros_costos_com_encabezado_docume"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_condiciones_pagos",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_condiciones_pagos_com_encabezado_doc"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_condiciones_pagos",
+		"column_name" : "condicion_pago_proveedor_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_condiciones_pagos_condicion_pago_pro"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_condiciones_pagos",
+		"column_name" : "tes_cuenta_bancaria_id",
+		"ref_table" : "tes_cuentas_bancarias",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_condiciones_pagos_tes_cuenta_bancari"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_condiciones_pagos",
+		"column_name" : "tipo_moneda_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_condiciones_pagos_tipo_moneda_id_for"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_entrega",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_entrega_com_encabezado_documento_id_"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_entrega",
+		"column_name" : "com_producto_variante_id",
+		"ref_table" : "com_productos_variantes",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_entrega_com_producto_variante_id_for"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_entrega",
+		"column_name" : "municipio_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_entrega_municipio_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_entrega",
+		"column_name" : "unidad_mayor_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_entrega_unidad_mayor_id_foreign"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_impuestos_deducciones",
+		"column_name" : "com_categorias_id",
+		"ref_table" : "com_categorias",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_impuestos_deducciones_com_categorias"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_impuestos_deducciones",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_impuestos_deducciones_com_encabezado"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_impuestos_deducciones",
+		"column_name" : "com_impuestos_deducciones_id",
+		"ref_table" : "com_impuestos_deducciones",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_impuestos_deducciones_com_impuestos_"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_impuestos_deducciones",
+		"column_name" : "com_terceros_id",
+		"ref_table" : "com_terceros",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_impuestos_deducciones_com_terceros_i"
+	},
+	{
+		"table_name" : "com_encabezados_documentos_impuestos_deducciones",
+		"column_name" : "con_plan_contable_id",
+		"ref_table" : "con_plan_contable",
+		"ref_column" : "id",
+		"constraint_name" : "com_encabezados_documentos_impuestos_deducciones_con_plan_conta"
+	},
+	{
+		"table_name" : "com_formularios",
+		"column_name" : "prv_modulo_id",
+		"ref_table" : "prv_modulos",
+		"ref_column" : "id",
+		"constraint_name" : "com_formularios_prv_modulo_id_foreign"
+	},
+	{
+		"table_name" : "com_formularios",
+		"column_name" : "tipo_formulario_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_formularios_tipo_formulario_id_foreign"
+	},
+	{
+		"table_name" : "com_formularios_detalles",
+		"column_name" : "com_formulario_id",
+		"ref_table" : "com_formularios",
+		"ref_column" : "id",
+		"constraint_name" : "com_formularios_detalles_com_formulario_id_foreign"
+	},
+	{
+		"table_name" : "com_formularios_detalles",
+		"column_name" : "com_formulario_pregunta_id",
+		"ref_table" : "com_formularios_preguntas",
+		"ref_column" : "id",
+		"constraint_name" : "com_formularios_detalles_com_formulario_pregunta_id_foreign"
+	},
+	{
+		"table_name" : "com_formularios_detalles",
+		"column_name" : "com_formulario_seccion_id",
+		"ref_table" : "com_formularios_secciones",
+		"ref_column" : "id",
+		"constraint_name" : "com_formularios_detalles_com_formulario_seccion_id_foreign"
+	},
+	{
+		"table_name" : "com_formularios_dinamicos",
+		"column_name" : "finalidad_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_formularios_dinamicos_finalidad_id_foreign"
+	},
+	{
+		"table_name" : "com_formularios_dinamicos",
+		"column_name" : "genero",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_formularios_dinamicos_genero_foreign"
+	},
+	{
+		"table_name" : "com_formularios_dinamicos",
+		"column_name" : "grupo_atencion",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_formularios_dinamicos_grupo_atencion_foreign"
+	},
+	{
+		"table_name" : "com_formularios_dinamicos",
+		"column_name" : "unidad_tiempo",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_formularios_dinamicos_unidad_tiempo_foreign"
+	},
+	{
+		"table_name" : "com_formularios_preguntas",
+		"column_name" : "formulario_tipo_pregunta_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_formularios_preguntas_formulario_tipo_pregunta_id_foreign"
+	},
+	{
+		"table_name" : "com_formularios_respuestas",
+		"column_name" : "com_formulario_pregunta_id",
+		"ref_table" : "com_formularios_preguntas",
+		"ref_column" : "id",
+		"constraint_name" : "com_formularios_respuestas_com_formulario_pregunta_id_foreign"
+	},
+	{
+		"table_name" : "com_formularios_secciones",
+		"column_name" : "formulario_tipo_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_formularios_secciones_formulario_tipo_id_foreign"
+	},
+	{
+		"table_name" : "com_formularios_secciones",
+		"column_name" : "formulario_tipo_pregunta_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_formularios_secciones_formulario_tipo_pregunta_id_foreign"
+	},
+	{
+		"table_name" : "com_importador_detalles",
+		"column_name" : "com_encabezado_documento_id",
+		"ref_table" : "com_encabezados_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "com_importador_detalles_com_encabezado_documento_id_foreign"
+	},
+	{
+		"table_name" : "com_importador_detalles",
+		"column_name" : "com_importador_id",
+		"ref_table" : "com_importador",
+		"ref_column" : "id",
+		"constraint_name" : "com_importador_detalles_com_importador_id_foreign"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones",
+		"column_name" : "causacion_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_impuestos_deducciones_causacion_id_foreign"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones",
+		"column_name" : "com_tercero_id",
+		"ref_table" : "com_terceros",
+		"ref_column" : "id",
+		"constraint_name" : "com_impuestos_deducciones_com_tercero_id_foreign"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones",
+		"column_name" : "con_plan_contable_compra_id",
+		"ref_table" : "con_plan_contable",
+		"ref_column" : "id",
+		"constraint_name" : "com_impuestos_deducciones_con_plan_contable_compra_id_foreign"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones",
+		"column_name" : "con_plan_contable_dev_compra_id",
+		"ref_table" : "con_plan_contable",
+		"ref_column" : "id",
+		"constraint_name" : "comimpuestodeduccion_conplancontabledevcompraid_foreign"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones",
+		"column_name" : "con_plan_contable_dev_venta_id",
+		"ref_table" : "con_plan_contable",
+		"ref_column" : "id",
+		"constraint_name" : "comimpuestodeduccion_conplancontabledevventaid_foreign"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones",
+		"column_name" : "con_plan_contable_venta_id",
+		"ref_table" : "con_plan_contable",
+		"ref_column" : "id",
+		"constraint_name" : "com_impuestos_deducciones_con_plan_contable_venta_id_foreign"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones",
+		"column_name" : "impuesto_base_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_impuestos_deducciones_impuesto_base_id_foreign"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones",
+		"column_name" : "impuesto_tipo_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_impuestos_deducciones_impuesto_tipo_id_foreign"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones",
+		"column_name" : "periodicidad_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_impuestos_deducciones_periodicidad_id_foreign"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones_actividad_economicas",
+		"column_name" : "actividad_economica_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_impuestos_deducciones_actividad_economicas_actividad_econom"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones_actividad_economicas",
+		"column_name" : "com_impuesto_deduccion_id",
+		"ref_table" : "com_impuestos_deducciones",
+		"ref_column" : "id",
+		"constraint_name" : "comimpuestodeduccionecategorias_comimpuestodeduccionid_foreign"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones_categorias",
+		"column_name" : "com_categoria_id",
+		"ref_table" : "com_categorias",
+		"ref_column" : "id",
+		"constraint_name" : "com_impuestos_deducciones_categorias_com_categoria_id_foreign"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones_categorias",
+		"column_name" : "com_impuesto_deduccion_id",
+		"ref_table" : "com_impuestos_deducciones",
+		"ref_column" : "id",
+		"constraint_name" : "com_impuestos_deducciones_categorias_com_impuesto_deduccion_id_"
+	},
+	{
+		"table_name" : "com_impuestos_deducciones_vigencias",
+		"column_name" : "com_impuesto_deduccion_id",
+		"ref_table" : "com_impuestos_deducciones",
+		"ref_column" : "id",
+		"constraint_name" : "comimpuestodeduccionevigencias_comimpuestodeduccionid_foreign"
+	},
+	{
+		"table_name" : "com_modulos_objetos_tipos_actividades",
+		"column_name" : "com_tipo_actividad_id",
+		"ref_table" : "com_tipos_actividades",
+		"ref_column" : "id",
+		"constraint_name" : "com_modulos_objetos_tipos_actividades_com_tipo_actividad_id_for"
+	},
+	{
+		"table_name" : "com_modulos_objetos_tipos_actividades",
+		"column_name" : "prv_modulo_objeto_id",
+		"ref_table" : "prv_modulos_objetos",
+		"ref_column" : "id",
+		"constraint_name" : "com_modulos_objetos_tipos_actividades_prv_modulo_objeto_id_fore"
+	},
+	{
+		"table_name" : "com_plantillas",
+		"column_name" : "prv_maestro_documento_id",
+		"ref_table" : "prv_maestros_documentos",
+		"ref_column" : "id",
+		"constraint_name" : "com_plantillas_actos_admin_prv_maestro_documento_id_foreign"
+	},
+	{
+		"table_name" : "com_plantillas_secciones",
+		"column_name" : "com_plantilla_id",
+		"ref_table" : "com_plantillas",
+		"ref_column" : "id",
+		"constraint_name" : "com_plantillas_secciones_com_plantilla_id_foreign"
+	},
+	{
+		"table_name" : "com_plantillas_secciones",
+		"column_name" : "tipo_seccion_id",
+		"ref_table" : "prv_listas_elementos",
+		"ref_column" : "id",
+		"constraint_name" : "com_plantillas_secciones_tipo_seccion_id_foreign"
+	},
+	{
+		"table_name" : "com_preguntas_formularios_dinamicos",
+		"column_name" : "com_formulario_dinamico_id",
+		"ref_table" : "com_formularios_dinamicos",
+		"ref_column" : "id",
+		"constraint_name" : "com_preguntas_formularios_dinamicos_com_formulario_dinamico_id_"
+	},
+	{
+		"table_name" : "com_preguntas_formularios_dinamicos",
+		"column_name" : "com_preguntas_formularios_dinamicos_id",
+		"ref_table" : "com_preguntas_formularios_dinamicos",
+		"ref_column" : "id",
+		"constraint_name" : "com_preguntas_formularios_dinamicos_com_preguntas_formularios_d"
+	},
+	{
+		"table_name" : "com_preguntas_formularios_dinamicos",
+		"column_name" : "com_seccion_formulario_dinamico_id",
+		"ref_table" : "com_secciones_formularios_dinamicos",
+		"ref_column" : "id",
+		"constraint_name" : "com_preguntas_formularios_dinamicos_secciones_id_foreign"
+	}
+]}
