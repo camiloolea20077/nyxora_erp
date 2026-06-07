@@ -2,7 +2,7 @@
 # Nyxora ERP — configuración base (WebFlux + R2DBC reactivo)
 # ============================================================================
 server:
-  port: ${SERVER_PORT:8081}   # 8081 para no chocar con otra app en 8080
+  port: ${SERVER_PORT}   # 8081 para no chocar con otra app en 8080
 
 spring:
   application:
@@ -10,9 +10,9 @@ spring:
 
   # Acceso a datos REACTIVO (runtime de la app)
   r2dbc:
-    url: ${R2DBC_URL:r2dbc:postgresql://localhost:5433/nyxora_erp}
-    username: ${DB_USER:nyxora}
-    password: ${DB_PASSWORD:nyxora}
+    url: ${R2DBC_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     pool:
       enabled: true
       initial-size: 5
@@ -21,9 +21,9 @@ spring:
   # Flyway corre sobre JDBC (bloqueante) SOLO al arrancar, para migrar el esquema.
   flyway:
     enabled: true
-    url: ${JDBC_URL:jdbc:postgresql://localhost:5433/nyxora_erp}
-    user: ${DB_USER:nyxora}
-    password: ${DB_PASSWORD:nyxora}
+    url: ${JDBC_URL}
+    user: ${DB_USER}
+    password: ${DB_PASSWORD}
     locations: classpath:db/migration
     schemas: public
     baseline-on-migrate: false

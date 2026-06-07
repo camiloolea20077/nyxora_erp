@@ -238,8 +238,18 @@ public class MapperRepository {
         return null; // O manejar el caso cuando no es convertible a LocalDate
     }
     private static LocalDateTime convertToLocalDateTime(Object value) {
-        if (value instanceof Timestamp) {
-            return ((Timestamp) value).toLocalDateTime();
+        // JDBC devuelve Timestamp; R2DBC devuelve LocalDateTime/OffsetDateTime/Instant.
+        if (value instanceof Timestamp ts) {
+            return ts.toLocalDateTime();
+        }
+        if (value instanceof LocalDateTime ldt) {
+            return ldt;
+        }
+        if (value instanceof java.time.OffsetDateTime odt) {
+            return odt.toLocalDateTime();
+        }
+        if (value instanceof java.time.Instant ins) {
+            return LocalDateTime.ofInstant(ins, java.time.ZoneId.systemDefault());
         }
         return null;
     }

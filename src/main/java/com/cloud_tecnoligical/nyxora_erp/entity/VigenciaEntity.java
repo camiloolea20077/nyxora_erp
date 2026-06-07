@@ -1,5 +1,6 @@
 package com.cloud_tecnoligical.nyxora_erp.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
@@ -9,13 +10,10 @@ import org.springframework.data.relational.core.mapping.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * Entidad R2DBC (Spring Data Relational, NO JPA). Tabla 'usuario' (español snake_case).
- */
-@Table("usuario")
+@Table("vigencia")
 @Getter
 @Setter
-public class UsuarioEntity {
+public class VigenciaEntity {
 
     @Id
     private Long id;
@@ -23,17 +21,17 @@ public class UsuarioEntity {
     @Column("empresa_id")
     private Long empresa_id;
 
-    @Column("tercero_id")
-    private Long tercero_id;
+    @Column("anio")
+    private Integer anio;
 
-    @Column("username")
-    private String username;
+    @Column("estado")
+    private String estado;
 
-    @Column("email")
-    private String email;
+    @Column("fecha_apertura")
+    private LocalDate fecha_apertura;
 
-    @Column("hash_password")
-    private String hash_password;
+    @Column("fecha_cierre")
+    private LocalDate fecha_cierre;
 
     @Column("activo")
     private Boolean activo;

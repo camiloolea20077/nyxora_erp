@@ -75,6 +75,7 @@ public class GlobalExceptionHandler {
     // Cualquier RuntimeException no específica
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Object>> handleRuntimeException(RuntimeException ex) {
+        logger.error("RuntimeException no controlada", ex);
         ApiResponse<Object> response = new ApiResponse<>(HttpStatus.CONFLICT.value(), ex.getMessage(), true, null);
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
@@ -82,6 +83,7 @@ public class GlobalExceptionHandler {
     // Cualquier otra excepción
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleGenericException(Exception ex) {
+        logger.error("Excepción no controlada", ex);
         ApiResponse<Object> response = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(),
                 true, null);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -87,5 +87,15 @@ config/                             OpenApiConfig...
 - [ ] Controller: `Mono<ResponseEntity<ApiResponse<T>>>`, `@Valid`, endpoints en inglés.
 - [ ] DTOs camelCase; sin aceptar `empresa_id`/`sede_id`; mensajes en español.
 
+## Gotchas reactivos (aprendidos, NO repetir)
+- **`Set.of(...).contains(x)` lanza NPE si `x` es null** (sets inmutables). En la lista blanca de
+  `ORDER BY` del QueryRepository, guardar null: `x != null && SORTABLE.contains(x)`.
+- **`MapperRepository.convertToLocalDateTime` (util del equipo) era para JDBC** (solo `Timestamp`).
+  R2DBC devuelve `LocalDateTime`/`OffsetDateTime`/`Instant`; ya se amplió el util para soportarlos.
+  Si un `createdAt`/fecha sale `null`, es por tipo no contemplado en el mapper.
+- **`created_at` en R2DBC NO lo pone `@PrePersist`** (no existe): setéalo en el Service antes de `save`
+  (o confía en el DEFAULT del DDL solo si NO envías la columna). `activo=true` también en el Service.
+- En `save()` de `ReactiveCrudRepository`: id null → INSERT; id no null → UPDATE.
+
 > Consulta los campos reales de la BD con el agente **base-datos** (diccionario en
 > `.claude/data/diccionario-datos.md`) antes de escribir SQL para una HU.

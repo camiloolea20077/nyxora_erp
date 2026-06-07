@@ -50,22 +50,30 @@ public class DevDataSeeder implements ApplicationRunner {
                 INSERT INTO empresa (nit, razon_social, tipo_persona) VALUES ('900123456','Empresa Demo S.A.S.','juridica') RETURNING id
                 """)
             .flatMap(empresaId -> insertReturningId("""
-                    INSERT INTO sede (empresa_id, codigo, nombre) VALUES (:e,'PRIN','Sede Principal') RETURNING id
+                    INSERT INTO tercero (empresa_id, tipo_identificacion_id, numero_documento, tipo_persona, nombre)
+                    SELECT :e, ti.id, '1000000000', 'natural', 'Administrador del Sistema'
+                    FROM tipo_identificacion ti ORDER BY ti.id LIMIT 1
+                    RETURNING id
                     """, "e", empresaId)
-                .flatMap(sedeId -> insertReturningId("""
-                        INSERT INTO rol (empresa_id, nombre) VALUES (:e,'Administrador') RETURNING id
+                .flatMap(terceroId -> insertReturningId("""
+                        INSERT INTO sede (empresa_id, codigo, nombre) VALUES (:e,'PRIN','Sede Principal') RETURNING id
                         """, "e", empresaId)
-                    .flatMap(rolId -> insertReturningId("""
-                            INSERT INTO usuario (empresa_id, username, email, hash_password)
-                            VALUES (:e,'admin','admin@nyxora.local',:h) RETURNING id
-                            """, "e", empresaId, "h", hash)
-                        .flatMap(usuarioId ->
-                            db.sql("INSERT INTO rol_permiso (rol_id, permiso_id) SELECT :r, id FROM permiso")
-                                .bind("r", rolId).fetch().rowsUpdated()
-                            .then(db.sql("INSERT INTO usuario_rol (usuario_id, rol_id, sede_id) VALUES (:u,:r,:s)")
-                                .bind("u", usuarioId).bind("r", rolId).bind("s", sedeId).fetch().rowsUpdated())
-                            .doOnSuccess(x -> log.info("DEMO sembrado: empresa={} usuario=admin / admin123", empresaId))
-                            .then()))))
+                    .flatMap(sedeId -> insertReturningId("""
+                            INSERT INTO rol (empresa_id, nombre) VALUES (:e,'Administrador') RETURNING id
+                            """, "e", empresaId)
+                        .flatMap(rolId -> db.sql("""
+                                INSERT INTO usuario (empresa_id, tercero_id, username, email, hash_password)
+                                VALUES (:e,:t,'admin','admin@nyxora.local',:h) RETURNING id
+                                """)
+                                .bind("e", empresaId).bind("t", terceroId).bind("h", hash)
+                                .map(row -> ((Number) row.get("id")).longValue()).one()
+                            .flatMap(usuarioId ->
+                                db.sql("INSERT INTO rol_permiso (rol_id, permiso_id) SELECT :r, id FROM permiso")
+                                    .bind("r", rolId).fetch().rowsUpdated()
+                                .then(db.sql("INSERT INTO usuario_rol (usuario_id, rol_id, sede_id) VALUES (:u,:r,:s)")
+                                    .bind("u", usuarioId).bind("r", rolId).bind("s", sedeId).fetch().rowsUpdated())
+                                .doOnSuccess(x -> log.info("DEMO sembrado: empresa={} tercero={} usuario=admin / admin123", empresaId, terceroId))
+                                .then())))))
             .then();
     }
 

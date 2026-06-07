@@ -9,13 +9,10 @@ import org.springframework.data.relational.core.mapping.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * Entidad R2DBC (Spring Data Relational, NO JPA). Tabla 'usuario' (español snake_case).
- */
-@Table("usuario")
+@Table("parametro")
 @Getter
 @Setter
-public class UsuarioEntity {
+public class ParametroEntity {
 
     @Id
     private Long id;
@@ -23,17 +20,14 @@ public class UsuarioEntity {
     @Column("empresa_id")
     private Long empresa_id;
 
-    @Column("tercero_id")
-    private Long tercero_id;
+    @Column("clave")
+    private String clave;
 
-    @Column("username")
-    private String username;
+    @Column("valor")
+    private String valor;
 
-    @Column("email")
-    private String email;
-
-    @Column("hash_password")
-    private String hash_password;
+    @Column("tipo_dato")
+    private String tipo_dato;
 
     @Column("activo")
     private Boolean activo;
