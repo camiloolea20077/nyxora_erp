@@ -1,0 +1,226 @@
+### ============================================================================
+### Sprint 5 — Inventario (HU-0009)
+### Ejecutar EN ORDEN (login, catálogos, producto y bodegas se encadenan solos).
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+
+### terceroId para responsable de bodega (el demo crea el tercero del admin). SELECT id FROM tercero;
+@terceroId = 1
+
+### Sufijo único por corrida → los códigos no chocan al re-ejecutar el archivo.
+@rid = {{$timestamp}}
+
+### ----------------------------------------------------------------------------
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ============================ CATÁLOGOS =====================================
+
+### Marca
+# @name marca
+POST {{baseUrl}}/api/marcas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "MRC-{{rid}}", "nombre": "Genérica" }
+
+### Producto (para mover en inventario)
+# @name producto
+POST {{baseUrl}}/api/productos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "INV-PROD-{{rid}}", "nombre": "Producto inventariable", "tipo": "bien", "manejaInventario": true }
+
+###
+@productoId = {{producto.response.body.$.data.id}}
+
+### Bodega A
+# @name crearBodegaA
+POST {{baseUrl}}/api/bodegas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "BOD-A-{{rid}}", "nombre": "Bodega Central", "permiteCompra": true }
+
+###
+@bodegaA = {{crearBodegaA.response.body.$.data.id}}
+
+### Bodega B (para el traslado)
+# @name crearBodegaB
+POST {{baseUrl}}/api/bodegas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "BOD-B-{{rid}}", "nombre": "Bodega Norte", "permiteCompra": true }
+
+###
+@bodegaB = {{crearBodegaB.response.body.$.data.id}}
+
+### Responsable de la bodega A
+POST {{baseUrl}}/api/bodegas/1/responsables
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "terceroId": {{terceroId}}, "predeterminado": true }
+
+### Listar responsables
+GET {{baseUrl}}/api/bodegas/1/responsables
+Authorization: Bearer {{token}}
+
+### Ubicación en bodega A
+# @name ubicacion
+POST {{baseUrl}}/api/ubicaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "bodegaId": 1, "codigo": "A-{{rid}}", "nombre": "Estante 1", "pasillo": 1, "altura": 1, "posicion": 1 }
+
+###
+@ubicacionId = {{ubicacion.response.body.$.data.id}}
+
+### Listar ubicaciones de la bodega A
+POST {{baseUrl}}/api/ubicaciones/list?bodegaId=1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### Lote
+# @name lote
+POST {{baseUrl}}/api/lotes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "LT-{{rid}}", "nombre": "Lote junio", "fechaFabricado": "2026-06-01", "fechaVencimiento": "2027-06-01" }
+
+###
+@loteId = {{lote.response.body.$.data.id}}
+
+### ====================== MOVIMIENTOS DE INVENTARIO ===========================
+
+### Entrada (100 und a $1.000 c/u) en bodega A
+# @name entrada
+POST {{baseUrl}}/api/movimientos-inventario
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bodegaId": 1,
+  "ubicacionId": {{ubicacionId}},
+  "productoId": {{productoId}},
+  "tipo": "entrada",
+  "fecha": "2026-06-05",
+  "cantidad": 100,
+  "costoUnitario": 1000
+}
+
+### Otra entrada a otro costo (para ver costo promedio: 50 und a $1.200)
+POST {{baseUrl}}/api/movimientos-inventario
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bodegaId": 1,
+  "productoId": {{productoId}},
+  "tipo": "entrada",
+  "fecha": "2026-06-06",
+  "cantidad": 50,
+  "costoUnitario": 1200
+}
+
+### Salida (30 und) — se almacena con cantidad negativa
+# @name salida
+POST {{baseUrl}}/api/movimientos-inventario
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bodegaId": 1,
+  "productoId": {{productoId}},
+  "tipo": "salida",
+  "fecha": "2026-06-07",
+  "cantidad": 30,
+  "costoUnitario": 1000
+}
+
+### Ajuste negativo (merma de 5) — cantidad negativa permitida en ajuste
+POST {{baseUrl}}/api/movimientos-inventario
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bodegaId": 1,
+  "productoId": {{productoId}},
+  "tipo": "ajuste",
+  "fecha": "2026-06-07",
+  "cantidad": -5,
+  "costoUnitario": 1000,
+  "descripcion": "Merma por avería"
+}
+
+### Salida con cantidad inválida (negativa) → debe responder 400
+POST {{baseUrl}}/api/movimientos-inventario
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "bodegaId": {{bodegaA}}, "productoId": {{productoId}}, "tipo": "salida", "fecha": "2026-06-07", "cantidad": -10 }
+
+### Traslado 20 und de bodega A → bodega B (genera 2 movimientos)
+POST {{baseUrl}}/api/movimientos-inventario/traslado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bodegaOrigenId": 1,
+  "bodegaDestinoId": 2,
+  "productoId": {{productoId}},
+  "fecha": "2026-06-07",
+  "cantidad": 20,
+  "costoUnitario": 1000,
+  "descripcion": "Reabastecimiento Norte"
+}
+
+### Reversar la salida (genera movimiento inverso)
+POST {{baseUrl}}/api/movimientos-inventario/{{salida.response.body.$.data.id}}/reversar
+Authorization: Bearer {{token}}
+
+### Kardex del producto (todas las bodegas) con saldo corriente
+GET {{baseUrl}}/api/movimientos-inventario/kardex?productoId={{productoId}}
+Authorization: Bearer {{token}}
+
+### Kardex solo de bodega A
+GET {{baseUrl}}/api/movimientos-inventario/kardex?productoId={{productoId}}&bodegaId=1
+Authorization: Bearer {{token}}
+
+### ============================ SALDOS ========================================
+
+### Recalcular saldos de bodega A
+POST {{baseUrl}}/api/saldos-inventario/recalcular
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "bodegaId": 1 }
+
+### Consultar existencias bodega A
+GET {{baseUrl}}/api/saldos-inventario?bodegaId=1
+Authorization: Bearer {{token}}
+
+### Recalcular + consultar bodega B (debe tener las 20 trasladadas)
+POST {{baseUrl}}/api/saldos-inventario/recalcular
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "bodegaId": 2 }
+
+###
+GET {{baseUrl}}/api/saldos-inventario?bodegaId=2
+Authorization: Bearer {{token}}

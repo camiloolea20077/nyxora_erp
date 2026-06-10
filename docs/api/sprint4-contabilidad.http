@@ -1,0 +1,211 @@
+### ============================================================================
+### Sprint 4 — Contabilidad (HU-0007) + bus de eventos / interfaz contable
+### Ejecutar EN ORDEN (login, cuentas, periodo, comprobante… se encadenan solos).
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+
+### La vigencia debe existir para el periodo.  SELECT id FROM vigencia;
+@vigenciaId = 1
+
+### ----------------------------------------------------------------------------
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ============================ PLAN DE CUENTAS ===============================
+
+### Cuenta mayor (agrupadora, NO imputable)
+# @name ctaMayor
+POST {{baseUrl}}/api/cuentas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codigoCuenta": "1",
+  "nombreCuenta": "ACTIVO",
+  "naturaleza": "debito",
+  "tipoCuenta": "activo",
+  "nivel": 1,
+  "manejaMovimiento": false
+}
+
+### Cuenta auxiliar de caja (imputable, naturaleza débito)
+# @name ctaCaja
+POST {{baseUrl}}/api/cuentas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cuentaPadreId": {{ctaMayor.response.body.$.data.id}},
+  "codigoCuenta": "110505",
+  "nombreCuenta": "Caja general",
+  "naturaleza": "debito",
+  "tipoCuenta": "activo",
+  "nivel": 4,
+  "manejaMovimiento": true
+}
+
+###
+@cuentaDebitoId = {{ctaCaja.response.body.$.data.id}}
+
+### Cuenta auxiliar de ingreso (imputable, naturaleza crédito)
+# @name ctaIngreso
+POST {{baseUrl}}/api/cuentas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codigoCuenta": "413505",
+  "nombreCuenta": "Ingresos por ventas",
+  "naturaleza": "credito",
+  "tipoCuenta": "ingreso",
+  "nivel": 4,
+  "manejaMovimiento": true
+}
+
+###
+@cuentaCreditoId = {{ctaIngreso.response.body.$.data.id}}
+
+### Listar cuentas
+POST {{baseUrl}}/api/cuentas/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 20 }
+
+### ========================= PERIODO CONTABLE =================================
+
+### Crear periodo (abierto)
+# @name periodo
+POST {{baseUrl}}/api/periodos-contables
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "vigenciaId": {{vigenciaId}}, "anio": 2026, "mes": 6 }
+
+###
+@periodoId = {{periodo.response.body.$.data.id}}
+
+### Listar periodos
+POST {{baseUrl}}/api/periodos-contables/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 12 }
+
+### ============================ COMPROBANTES ==================================
+
+### Crear comprobante BALANCEADO (débito caja = crédito ingreso) → estado borrador
+# @name comprobante
+POST {{baseUrl}}/api/comprobantes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "periodoContableId": {{periodoId}},
+  "fecha": "2026-06-15",
+  "descripcion": "Venta de contado",
+  "origenModulo": "manual",
+  "movimientos": [
+    { "cuentaId": {{cuentaDebitoId}}, "descripcion": "Ingreso a caja", "debito": 119000, "credito": 0 },
+    { "cuentaId": {{cuentaCreditoId}}, "descripcion": "Venta gravada", "debito": 0, "credito": 119000 }
+  ]
+}
+
+###
+@comprobanteId = {{comprobante.response.body.$.data.id}}
+
+### Crear comprobante DESCUADRADO → debe responder 400
+POST {{baseUrl}}/api/comprobantes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "periodoContableId": {{periodoId}},
+  "fecha": "2026-06-15",
+  "descripcion": "Asiento descuadrado (debe fallar)",
+  "movimientos": [
+    { "cuentaId": {{cuentaDebitoId}}, "debito": 100000, "credito": 0 },
+    { "cuentaId": {{cuentaCreditoId}}, "debito": 0, "credito": 90000 }
+  ]
+}
+
+### Consultar comprobante (con movimientos)
+GET {{baseUrl}}/api/comprobantes/{{comprobanteId}}
+Authorization: Bearer {{token}}
+
+### Confirmar comprobante (periodo abierto + balance)
+POST {{baseUrl}}/api/comprobantes/{{comprobanteId}}/confirmar
+Authorization: Bearer {{token}}
+
+### Listar comprobantes
+POST {{baseUrl}}/api/comprobantes/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### ============================ SALDOS ========================================
+
+### Recalcular saldos del periodo (proyección desde movimientos no-borrador)
+POST {{baseUrl}}/api/saldos/recalcular
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "periodoContableId": {{periodoId}} }
+
+### Consultar saldos del periodo
+GET {{baseUrl}}/api/saldos?periodoContableId={{periodoId}}
+Authorization: Bearer {{token}}
+
+### ===================== REVERSA (genera comprobante inverso) =================
+POST {{baseUrl}}/api/comprobantes/{{comprobanteId}}/reversar
+Authorization: Bearer {{token}}
+
+### Recalcular saldos otra vez → original + reversa se netean a cero
+POST {{baseUrl}}/api/saldos/recalcular
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "periodoContableId": {{periodoId}} }
+
+### ============== BUS DE EVENTOS — INTERFAZ CONTABLE (demo) ====================
+### Publica un AsientoContableSolicitado; el listener crea+confirma el comprobante async.
+POST {{baseUrl}}/api/eventos/asiento-demo
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "periodoContableId": {{periodoId}},
+  "fecha": "2026-06-20",
+  "descripcion": "Asiento generado por interfaz contable (evento)",
+  "origenModulo": "facturacion",
+  "origenId": 999,
+  "movimientos": [
+    { "cuentaId": {{cuentaDebitoId}}, "debito": 50000, "credito": 0 },
+    { "cuentaId": {{cuentaCreditoId}}, "debito": 0, "credito": 50000 }
+  ]
+}
+
+### Tras unos instantes, verifica que el comprobante apareció (origen facturacion#999)
+POST {{baseUrl}}/api/comprobantes/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### ===================== CIERRE DE PERIODO ====================================
+### Cerrar el periodo → confirmar/reversar en él debe responder 400
+POST {{baseUrl}}/api/periodos-contables/{{periodoId}}/cerrar
+Authorization: Bearer {{token}}
+
+### Reabrir
+POST {{baseUrl}}/api/periodos-contables/{{periodoId}}/reabrir
+Authorization: Bearer {{token}}

@@ -1,0 +1,225 @@
+### ============================================================================
+### Sprint 6 — Compras (HU-0008): orden → aprobar → recepción → confirmar
+###   confirmar = entra a inventario (HU-0009) + asiento contable por evento (HU-0007)
+### Ejecutar EN ORDEN. Los nombres de request son distintos de las variables (a propósito).
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+
+### Proveedor (tercero). El demo crea el tercero del admin. SELECT id FROM tercero;
+@proveedorId = 1
+### Vigencia para el periodo contable. SELECT id FROM vigencia;
+@vigenciaId = 1
+### Sufijo único por corrida (códigos no chocan al re-ejecutar).
+@rid = {{$timestamp}}
+
+### ----------------------------------------------------------------------------
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ===================== PRE-REQUISITOS (catálogos) ===========================
+
+### Producto a comprar
+# @name producto
+POST {{baseUrl}}/api/productos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "CMP-PROD-{{rid}}", "nombre": "Producto comprable", "tipo": "bien", "manejaInventario": true }
+
+###
+@productoId = {{producto.response.body.$.data.id}}
+
+### Bodega destino
+# @name bodega
+POST {{baseUrl}}/api/bodegas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "BOD-CMP-{{rid}}", "nombre": "Bodega Compras", "permiteCompra": true }
+
+###
+@bodegaId = {{bodega.response.body.$.data.id}}
+
+### Cuenta de inventario (imputable, débito) — para el asiento contable
+# @name ctaInv
+POST {{baseUrl}}/api/cuentas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigoCuenta": "143501-{{rid}}", "nombreCuenta": "Inventario mercancías", "naturaleza": "debito", "tipoCuenta": "activo", "manejaMovimiento": true }
+
+###
+@cuentaInvId = {{ctaInv.response.body.$.data.id}}
+
+### Cuenta contrapartida (imputable, crédito) — p.ej. cuentas por pagar
+# @name ctaContra
+POST {{baseUrl}}/api/cuentas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigoCuenta": "220501-{{rid}}", "nombreCuenta": "Proveedores nacionales", "naturaleza": "credito", "tipoCuenta": "pasivo", "manejaMovimiento": true }
+
+###
+@cuentaContraId = {{ctaContra.response.body.$.data.id}}
+
+### Periodo contable abierto (para el asiento)
+# @name periodo
+POST {{baseUrl}}/api/periodos-contables
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "vigenciaId": {{vigenciaId}}, "anio": 2026, "mes": 7 }
+
+###
+@periodoId = {{periodo.response.body.$.data.id}}
+
+### ========================= ORDEN DE COMPRA ==================================
+
+### Crear orden de compra (1 línea: 100 und a $1.000)
+# @name crearOrden
+POST {{baseUrl}}/api/ordenes-compra
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "proveedorId": {{proveedorId}},
+  "bodegaId": {{bodegaId}},
+  "fecha": "2026-07-01",
+  "observaciones": "Compra de prueba",
+  "lineas": [
+    { "productoId": {{productoId}}, "descripcion": "Mercancía", "cantidad": 100, "valorUnitario": 1000 }
+  ]
+}
+
+###
+@ordenId = {{crearOrden.response.body.$.data.id}}
+@ordenLineaId = {{crearOrden.response.body.$.data.lineas[0].id}}
+
+### Consultar orden (estado borrador, totales calculados)
+GET {{baseUrl}}/api/ordenes-compra/{{ordenId}}
+Authorization: Bearer {{token}}
+
+### Aprobar la orden (borrador → aprobada)
+POST {{baseUrl}}/api/ordenes-compra/{{ordenId}}/aprobar
+Authorization: Bearer {{token}}
+
+### ========================= RECEPCIÓN ========================================
+
+### Crear recepción parcial (recibe 60 de las 100)
+# @name crearRecepcion
+POST {{baseUrl}}/api/recepciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "ordenCompraId": {{ordenId}},
+  "bodegaId": {{bodegaId}},
+  "fecha": "2026-07-05",
+  "observaciones": "Primer despacho",
+  "lineas": [
+    { "ordenCompraLineaId": {{ordenLineaId}}, "productoId": {{productoId}}, "cantidadRecibida": 60, "costoUnitario": 1000 }
+  ]
+}
+
+###
+@recepcionId = {{crearRecepcion.response.body.$.data.id}}
+
+### Confirmar recepción CON contabilidad → inventario (entrada 60) + asiento (60.000 déb inv / créd contrapartida)
+POST {{baseUrl}}/api/recepciones/{{recepcionId}}/confirmar
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cuentaInventarioId": {{cuentaInvId}},
+  "cuentaContrapartidaId": {{cuentaContraId}},
+  "periodoContableId": {{periodoId}}
+}
+
+### ========================= VERIFICACIÓN =====================================
+
+### La orden debe quedar 'recibida_parcial' (faltan 40)
+GET {{baseUrl}}/api/ordenes-compra/{{ordenId}}
+Authorization: Bearer {{token}}
+
+### Kardex del producto en la bodega → entrada de 60 con saldo corriente
+GET {{baseUrl}}/api/movimientos-inventario/kardex?productoId={{productoId}}&bodegaId={{bodegaId}}
+Authorization: Bearer {{token}}
+
+### Recalcular y consultar saldo de inventario (debe haber 60)
+POST {{baseUrl}}/api/saldos-inventario/recalcular
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "bodegaId": {{bodegaId}} }
+
+###
+GET {{baseUrl}}/api/saldos-inventario?bodegaId={{bodegaId}}
+Authorization: Bearer {{token}}
+
+### Comprobantes → la interfaz contable debió crear el asiento (origen compras#recepcion, async)
+POST {{baseUrl}}/api/comprobantes/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### ========================= 2ª RECEPCIÓN (cierra la orden) ====================
+
+### Crear recepción del resto (40) — sin contabilidad esta vez
+# @name crearRecepcion2
+POST {{baseUrl}}/api/recepciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "ordenCompraId": {{ordenId}},
+  "bodegaId": {{bodegaId}},
+  "fecha": "2026-07-10",
+  "lineas": [
+    { "ordenCompraLineaId": {{ordenLineaId}}, "productoId": {{productoId}}, "cantidadRecibida": 40, "costoUnitario": 1000 }
+  ]
+}
+
+###
+@recepcion2Id = {{crearRecepcion2.response.body.$.data.id}}
+
+### Confirmar 2ª recepción → la orden debe pasar a 'recibida_total'
+POST {{baseUrl}}/api/recepciones/{{recepcion2Id}}/confirmar
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{}
+
+### Verificar orden 'recibida_total'
+GET {{baseUrl}}/api/ordenes-compra/{{ordenId}}
+Authorization: Bearer {{token}}
+
+### Intentar recibir de más (10 sobre 0 pendiente) → debe responder 400
+# @name recepcionExceso
+POST {{baseUrl}}/api/recepciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "ordenCompraId": {{ordenId}},
+  "bodegaId": {{bodegaId}},
+  "fecha": "2026-07-11",
+  "lineas": [
+    { "ordenCompraLineaId": {{ordenLineaId}}, "productoId": {{productoId}}, "cantidadRecibida": 10, "costoUnitario": 1000 }
+  ]
+}
+
+### Confirmar la del exceso → 400 "La cantidad recibida supera lo pendiente"
+POST {{baseUrl}}/api/recepciones/{{recepcionExceso.response.body.$.data.id}}/confirmar
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{}

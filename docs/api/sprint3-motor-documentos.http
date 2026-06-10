@@ -1,0 +1,133 @@
+### ============================================================================
+### Sprint 3 — Motor de documentos: tipo_documento + consecutivo atómico + adjuntos
+### HU-0006. Ejecutar EN ORDEN (login + IDs se encadenan solos).
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+
+### El consecutivo requiere una vigencia real. La sede sale del JWT (demo: Sede Principal).
+### Consulta: SELECT id FROM vigencia;
+@vigenciaId = 1
+
+### ----------------------------------------------------------------------------
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ========================= TIPOS DE DOCUMENTO ===============================
+
+### Crear tipo de documento (factura de venta)
+# @name crearTipoDoc
+POST {{baseUrl}}/api/tipos-documento
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "modulo": "facturacion",
+  "codigo": "FV",
+  "nombre": "Factura de venta",
+  "prefijo": "FV-",
+  "reiniciaPorVigencia": true
+}
+
+###
+@tipoDocId = {{crearTipoDoc.response.body.$.data.id}}
+
+### Consultar tipo de documento
+GET {{baseUrl}}/api/tipos-documento/{{tipoDocId}}
+Authorization: Bearer {{token}}
+
+### Actualizar tipo de documento
+PUT {{baseUrl}}/api/tipos-documento
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": {{tipoDocId}},
+  "modulo": "facturacion",
+  "codigo": "FV",
+  "nombre": "Factura electrónica de venta",
+  "prefijo": "FE-",
+  "reiniciaPorVigencia": true,
+  "active": true
+}
+
+### Listar tipos de documento
+POST {{baseUrl}}/api/tipos-documento/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### ===================== CONSECUTIVO ATÓMICO ==================================
+### Cada llamada incrementa el número (1, 2, 3, ...) bajo bloqueo FOR UPDATE.
+### La sede se toma del JWT; puedes forzar otra enviando "sedeId".
+
+### Siguiente consecutivo (1ª vez → 1)
+POST {{baseUrl}}/api/tipos-documento/{{tipoDocId}}/consecutivo
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "vigenciaId": {{vigenciaId}} }
+
+### Siguiente consecutivo (2ª vez → 2)
+POST {{baseUrl}}/api/tipos-documento/{{tipoDocId}}/consecutivo
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "vigenciaId": {{vigenciaId}} }
+
+### Siguiente consecutivo forzando sede explícita
+POST {{baseUrl}}/api/tipos-documento/{{tipoDocId}}/consecutivo
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "vigenciaId": {{vigenciaId}}, "sedeId": 1 }
+
+### ============================ ADJUNTOS ======================================
+### Adjunto polimórfico: se ancla a cualquier (modulo, entidad, entidadId).
+
+### Crear adjunto (ej. anclado a un producto id=1)
+# @name crearAdjunto
+POST {{baseUrl}}/api/adjuntos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "modulo": "comun",
+  "entidad": "producto",
+  "entidadId": 1,
+  "nombre": "ficha-tecnica.pdf",
+  "tipoMime": "application/pdf",
+  "url": "https://storage.local/nyxora/producto/1/ficha-tecnica.pdf",
+  "tamanoBytes": 245760,
+  "descripcion": "Ficha técnica del producto"
+}
+
+###
+@adjuntoId = {{crearAdjunto.response.body.$.data.id}}
+
+### Consultar adjunto por id
+GET {{baseUrl}}/api/adjuntos/{{adjuntoId}}
+Authorization: Bearer {{token}}
+
+### Listar adjuntos de un objeto (modulo + entidad + entidadId)
+GET {{baseUrl}}/api/adjuntos?modulo=comun&entidad=producto&entidadId=1
+Authorization: Bearer {{token}}
+
+### Eliminar adjunto (lógico)
+DELETE {{baseUrl}}/api/adjuntos/{{adjuntoId}}
+Authorization: Bearer {{token}}
+
+### Eliminar tipo de documento (lógico)
+DELETE {{baseUrl}}/api/tipos-documento/{{tipoDocId}}
+Authorization: Bearer {{token}}

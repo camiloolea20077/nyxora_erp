@@ -118,7 +118,7 @@ public class MapperRepository {
                         if(value != null){
                             field.set(instance, ((Number) value).shortValue());
                         }else{
-                            field.set(instance, 0);
+                            field.set(instance, null);
                         }
                     } else if (field.getType().equals(String.class)) {
                         if(value != null){

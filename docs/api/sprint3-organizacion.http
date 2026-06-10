@@ -1,0 +1,236 @@
+### ============================================================================
+### Sprint 3 — Organización (centro de costo, dependencia, proyecto) + Recursos
+### HU-0004 / HU-0005. Ejecutar EN ORDEN (login + IDs se encadenan solos).
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+
+### sedeId opcional para centro de costo (FK a sede). El demo crea 'Sede Principal'.
+### Consulta: SELECT id FROM sede;
+@sedeId = 1
+
+### ----------------------------------------------------------------------------
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ============================ RECURSOS ======================================
+
+### Crear recurso
+# @name crearRecurso
+POST {{baseUrl}}/api/recursos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codigo": "REC-01",
+  "nombre": "Mano de obra directa",
+  "tipoRecurso": "humano",
+  "driver": "horas",
+  "costoAdicional": false,
+  "descripcion": "Horas hombre de planta"
+}
+
+###
+@recursoId = {{crearRecurso.response.body.$.data.id}}
+
+### Consultar recurso
+GET {{baseUrl}}/api/recursos/{{recursoId}}
+Authorization: Bearer {{token}}
+
+### Actualizar recurso
+PUT {{baseUrl}}/api/recursos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": {{recursoId}},
+  "codigo": "REC-01",
+  "nombre": "Mano de obra directa (planta)",
+  "tipoRecurso": "humano",
+  "active": true
+}
+
+### Listar recursos
+POST {{baseUrl}}/api/recursos/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### Eliminar recurso
+DELETE {{baseUrl}}/api/recursos/{{recursoId}}
+Authorization: Bearer {{token}}
+
+### ========================= CENTROS DE COSTO =================================
+
+### Crear centro de costo raíz
+# @name crearCentro
+POST {{baseUrl}}/api/centros-costo
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "sedeId": {{sedeId}},
+  "codigo": "CC-01",
+  "nombre": "Administración",
+  "tipoCentroCosto": "operativo",
+  "esObservacion": false,
+  "manejaPlanFinanciero": false,
+  "nivel": 0
+}
+
+###
+@centroId = {{crearCentro.response.body.$.data.id}}
+
+### Crear centro de costo hijo (hoja imputable)
+# @name crearCentroHijo
+POST {{baseUrl}}/api/centros-costo
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "centroCostoPadreId": {{centroId}},
+  "codigo": "CC-01-01",
+  "nombre": "Contabilidad",
+  "esObservacion": true,
+  "nivel": 1
+}
+
+### Consultar centro de costo
+GET {{baseUrl}}/api/centros-costo/{{centroId}}
+Authorization: Bearer {{token}}
+
+### Actualizar centro de costo
+PUT {{baseUrl}}/api/centros-costo
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": {{centroId}},
+  "codigo": "CC-01",
+  "nombre": "Administración General",
+  "active": true
+}
+
+### Listar centros de costo
+POST {{baseUrl}}/api/centros-costo/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### ============================ DEPENDENCIAS ==================================
+
+### Crear dependencia (bajo el centro de costo)
+# @name crearDependencia
+POST {{baseUrl}}/api/dependencias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "centroCostoId": {{centroId}},
+  "codigo": "DEP-01",
+  "nombre": "Oficina principal",
+  "ubicacion": "Piso 2",
+  "latitud": "6.2442",
+  "longitud": "-75.5812",
+  "nivel": 0
+}
+
+###
+@dependenciaId = {{crearDependencia.response.body.$.data.id}}
+
+### Crear dependencia hija
+POST {{baseUrl}}/api/dependencias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "centroCostoId": {{centroId}},
+  "dependenciaPadreId": {{dependenciaId}},
+  "codigo": "DEP-01-01",
+  "nombre": "Recepción",
+  "nivel": 1
+}
+
+### Consultar dependencia
+GET {{baseUrl}}/api/dependencias/{{dependenciaId}}
+Authorization: Bearer {{token}}
+
+### Actualizar dependencia
+PUT {{baseUrl}}/api/dependencias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": {{dependenciaId}},
+  "centroCostoId": {{centroId}},
+  "codigo": "DEP-01",
+  "nombre": "Oficina principal (norte)",
+  "active": true
+}
+
+### Listar dependencias
+POST {{baseUrl}}/api/dependencias/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### ============================ PROYECTOS =====================================
+
+### Crear proyecto
+# @name crearProyecto
+POST {{baseUrl}}/api/proyectos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codigo": "PRY-2026-01",
+  "nombre": "Implementación ERP",
+  "descripcion": "Despliegue del ERP Nyxora",
+  "fechaInicio": "2026-01-15",
+  "fechaFinal": "2026-12-31"
+}
+
+###
+@proyectoId = {{crearProyecto.response.body.$.data.id}}
+
+### Consultar proyecto
+GET {{baseUrl}}/api/proyectos/{{proyectoId}}
+Authorization: Bearer {{token}}
+
+### Actualizar proyecto
+PUT {{baseUrl}}/api/proyectos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": {{proyectoId}},
+  "codigo": "PRY-2026-01",
+  "nombre": "Implementación ERP Nyxora",
+  "fechaInicio": "2026-01-15",
+  "fechaFinal": "2026-11-30",
+  "active": true
+}
+
+### Listar proyectos
+POST {{baseUrl}}/api/proyectos/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### Eliminar proyecto
+DELETE {{baseUrl}}/api/proyectos/{{proyectoId}}
+Authorization: Bearer {{token}}

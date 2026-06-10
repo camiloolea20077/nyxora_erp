@@ -28,19 +28,23 @@ puerto app 8081. Pendiente: CI (build+test) y healthcheck.
 - Terceros + satélites (contacto, dirección, cuenta bancaria, clasificación) (**HU-0002**).
 - CRUD de catálogos globales (tipo_identificacion, geografía, bancos, etc.).
 
-### Sprint 3 — Común: Productos y Organización
+### Sprint 3 — Común: Productos y Organización  ✅ (código entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`.
 - Productos (+ variantes, proveedores, categoría) (**HU-0003**). Impuestos.
 - Centro de costo, dependencia, proyecto, recurso (**HU-0004/0005**).
 - Motor de documentos: tipo_documento + **consecutivo atómico** (`FOR UPDATE`) (**HU-0006**). Adjuntos.
 
-### Sprint 4 — Contabilidad
+### Sprint 4 — Contabilidad  ✅ (código entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`.
 - Plan de cuentas, periodo, comprobante + movimiento (append-only), saldos (proyección) (**HU-0007**).
 - **Bus de eventos de dominio in-process** (reactivo) para interfaces contables.
 
-### Sprint 5 — Inventario
+### Sprint 5 — Inventario  ✅ (código entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`.
 - Bodega, ubicación, lote, marca; movimiento_inventario (append-only); saldo/kardex (proyección) (**HU-0009**).
 
-### Sprint 6 — Compras
+### Sprint 6 — Compras  ✅ (código entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`.
 - Orden de compra + líneas; recepción + líneas → entra a inventario + asiento contable (**HU-0008**).
 
 ### Sprint 7 — Facturación

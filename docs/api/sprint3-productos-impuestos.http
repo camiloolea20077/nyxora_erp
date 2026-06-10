@@ -1,0 +1,292 @@
+### ============================================================================
+### Sprint 3 — Productos, Categorías e Impuestos (HU-0003)
+### Ejecutar con REST Client (VS Code) o HTTP Client (IntelliJ).
+### Corre las peticiones EN ORDEN: el login y los IDs creados se encadenan solos.
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+
+### Algunos FK necesitan datos reales (no sembrados por el demo). Ajusta estos ids
+### consultando la BD:  SELECT id FROM vigencia;  SELECT id FROM unidad_medida;  SELECT id FROM tercero;
+@vigenciaId = 1
+@unidadMayorId = 1
+@proveedorTerceroId = 1
+
+### ----------------------------------------------------------------------------
+### 0) Login (admin / admin123) — captura el accessToken
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ============================ IMPUESTOS =====================================
+
+### Crear impuesto (IVA 19%) — vigenciaId DEBE existir
+# @name crearImpuesto
+POST {{baseUrl}}/api/impuestos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codigo": "IVA19",
+  "nombre": "IVA 19%",
+  "tipo": "iva",
+  "causacion": "ambas",
+  "baseGravable": "total",
+  "periodicidad": "bimestral",
+  "aplicaAiu": false,
+  "retencionNomina": false,
+  "tarifa": 19.0000,
+  "vigenciaId": {{vigenciaId}}
+}
+
+###
+@impuestoId = {{crearImpuesto.response.body.$.data.id}}
+
+### Crear segundo impuesto (Retefuente) para usarlo como impuesto adicional
+# @name crearImpuesto2
+POST {{baseUrl}}/api/impuestos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codigo": "RTF25",
+  "nombre": "Retención en la fuente 2.5%",
+  "tipo": "retencion",
+  "tarifa": 2.5000,
+  "vigenciaId": {{vigenciaId}}
+}
+
+###
+@impuesto2Id = {{crearImpuesto2.response.body.$.data.id}}
+
+### Consultar impuesto por id
+GET {{baseUrl}}/api/impuestos/{{impuestoId}}
+Authorization: Bearer {{token}}
+
+### Actualizar impuesto
+PUT {{baseUrl}}/api/impuestos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": {{impuestoId}},
+  "codigo": "IVA19",
+  "nombre": "IVA general 19%",
+  "tipo": "iva",
+  "tarifa": 19.0000,
+  "vigenciaId": {{vigenciaId}},
+  "active": true
+}
+
+### Listar impuestos (paginado + búsqueda)
+POST {{baseUrl}}/api/impuestos/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10, "search": "iva" }
+
+### ============================ CATEGORÍAS ====================================
+
+### Crear categoría raíz
+# @name crearCategoria
+POST {{baseUrl}}/api/categorias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codigo": "CAT-GEN",
+  "nombre": "General",
+  "tipoProducto": "bien",
+  "metodoCosteo": "promedio",
+  "nivel": 0
+}
+
+###
+@categoriaId = {{crearCategoria.response.body.$.data.id}}
+
+### Crear subcategoría (hija de la anterior)
+POST {{baseUrl}}/api/categorias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "categoriaPadreId": {{categoriaId}},
+  "codigo": "CAT-BEB",
+  "nombre": "Bebidas",
+  "tipoProducto": "bien",
+  "nivel": 1
+}
+
+### Consultar categoría por id
+GET {{baseUrl}}/api/categorias/{{categoriaId}}
+Authorization: Bearer {{token}}
+
+### Listar categorías
+POST {{baseUrl}}/api/categorias/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### ============================ PRODUCTOS =====================================
+
+### Crear producto (mínimo)
+# @name crearProductoMinimo
+POST {{baseUrl}}/api/productos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codigo": "PROD-001",
+  "nombre": "Producto de prueba simple",
+  "tipo": "bien"
+}
+
+### Crear producto COMPLETO (con categoría, impuesto por defecto e impuestos adicionales)
+# @name crearProducto
+POST {{baseUrl}}/api/productos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "categoriaId": {{categoriaId}},
+  "codigo": "PROD-002",
+  "codigoUnspsc": "50202301",
+  "nombre": "Gaseosa 350ml",
+  "descripcion": "Bebida gaseosa lata 350ml",
+  "tipo": "bien",
+  "esCompuesto": false,
+  "unidadMayorId": {{unidadMayorId}},
+  "unidadMenorId": {{unidadMayorId}},
+  "contenido": 350.0000,
+  "manejaInventario": true,
+  "manejaLote": true,
+  "manejaDesperdicio": false,
+  "esDevolutivo": false,
+  "stockMinimo": 10.0000,
+  "stockMaximo": 500.0000,
+  "tiempoReabastecimiento": 5,
+  "impuestoId": {{impuestoId}},
+  "discriminaIva": true,
+  "aplicaImpuestoBolsa": false,
+  "tarifaMaxima": 3500.0000,
+  "esPos": true,
+  "impuestoIds": [{{impuestoId}}, {{impuesto2Id}}]
+}
+
+###
+@productoId = {{crearProducto.response.body.$.data.id}}
+
+### Consultar producto por id (incluye impuestoIds)
+GET {{baseUrl}}/api/productos/{{productoId}}
+Authorization: Bearer {{token}}
+
+### Actualizar producto (reemplaza impuestos)
+PUT {{baseUrl}}/api/productos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": {{productoId}},
+  "categoriaId": {{categoriaId}},
+  "codigo": "PROD-002",
+  "nombre": "Gaseosa 350ml (actualizada)",
+  "tipo": "bien",
+  "impuestoIds": [{{impuestoId}}],
+  "active": true
+}
+
+### Listar productos (paginado + búsqueda)
+POST {{baseUrl}}/api/productos/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10, "search": "gaseosa" }
+
+### ===================== SATÉLITES DEL PRODUCTO ===============================
+
+### Variantes — listar
+GET {{baseUrl}}/api/productos/{{productoId}}/variantes
+Authorization: Bearer {{token}}
+
+### Variantes — crear
+# @name crearVariante
+POST {{baseUrl}}/api/productos/{{productoId}}/variantes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "skuPlu": "PLU0001",
+  "codigoBarra": "7700000000017",
+  "precioAdicional": 200.0000,
+  "costo": 1500.0000
+}
+
+###
+@varianteId = {{crearVariante.response.body.$.data.id}}
+
+### Variantes — actualizar
+PUT {{baseUrl}}/api/productos/{{productoId}}/variantes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": {{varianteId}},
+  "skuPlu": "PLU0001",
+  "codigoBarra": "7700000000017",
+  "precioAdicional": 250.0000,
+  "active": true
+}
+
+### Variantes — eliminar
+DELETE {{baseUrl}}/api/productos/{{productoId}}/variantes/{{varianteId}}
+Authorization: Bearer {{token}}
+
+### Proveedores — listar
+GET {{baseUrl}}/api/productos/{{productoId}}/proveedores
+Authorization: Bearer {{token}}
+
+### Proveedores — crear (proveedorId DEBE ser un tercero de tu empresa)
+# @name crearProvProd
+POST {{baseUrl}}/api/productos/{{productoId}}/proveedores
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "proveedorId": {{proveedorTerceroId}},
+  "codigoProducto": "PRV-ABC-01",
+  "cantidadMinima": 12.0000,
+  "plazoEntrega": 3
+}
+
+###
+@prodProvId = {{crearProvProd.response.body.$.data.id}}
+
+### Proveedores — actualizar
+PUT {{baseUrl}}/api/productos/{{productoId}}/proveedores
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": {{prodProvId}},
+  "proveedorId": {{proveedorTerceroId}},
+  "codigoProducto": "PRV-ABC-02",
+  "cantidadMinima": 24.0000,
+  "active": true
+}
+
+### Proveedores — eliminar
+DELETE {{baseUrl}}/api/productos/{{productoId}}/proveedores/{{prodProvId}}
+Authorization: Bearer {{token}}
+
+### Eliminar producto (lógico)
+DELETE {{baseUrl}}/api/productos/{{productoId}}
+Authorization: Bearer {{token}}
