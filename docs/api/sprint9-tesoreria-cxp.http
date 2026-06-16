@@ -1,0 +1,171 @@
+### ============================================================================
+### Sprint 9 — Tesorería (HU-0013) + Cuentas por Pagar (HU-0014)
+###   factura proveedor → obligación (con retenciones) → egreso (gira y paga la obligación)
+### Ejecutar EN ORDEN.
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+
+### Proveedor (tercero). SELECT id FROM tercero;
+@proveedorId = 1
+@vigenciaId = 1
+@rid = {{$timestamp}}
+
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ============================ TESORERÍA =====================================
+
+### Cuenta bancaria propia (banco_id 1 = del seed de catálogos)
+# @name ctaBanco
+POST {{baseUrl}}/api/cuentas-bancarias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "bancoId": 1, "numeroCuenta": "CTA-{{rid}}", "manejaSobregiro": false, "aceptaTransferencias": true }
+
+###
+@cuentaBancariaId = {{ctaBanco.response.body.$.data.id}}
+
+### Chequera de esa cuenta
+POST {{baseUrl}}/api/chequeras
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "cuentaBancariaId": {{cuentaBancariaId}}, "numeroInicial": 1000, "numeroFinal": 1100 }
+
+### ========================= CUENTAS POR PAGAR ================================
+
+### Factura de proveedor (FE recibida)
+# @name facProv
+POST {{baseUrl}}/api/facturas-proveedor
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "proveedorId": {{proveedorId}}, "numeroDocumento": "FPV-{{rid}}", "cufe": "CUFE-{{rid}}", "fechaRecepcion": "2026-06-14", "valorFactura": 1190000 }
+
+###
+@facturaProveedorId = {{facProv.response.body.$.data.id}}
+
+### Registrar evento RADIAN (acuse de recibo)
+POST {{baseUrl}}/api/facturas-proveedor/{{facturaProveedorId}}/eventos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "evento": "acuse_recibo", "fechaEvento": "2026-06-14", "estado": "aceptada", "cudeEvento": "CUDE-{{rid}}" }
+
+### Obligación de pago (total 1.190.000, retención fuente 25.000 → saldo 1.165.000)
+# @name oblig
+POST {{baseUrl}}/api/obligaciones-pago
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "proveedorId": {{proveedorId}},
+  "facturaProveedorId": {{facturaProveedorId}},
+  "numero": "OBL-{{rid}}",
+  "fecha": "2026-06-14",
+  "fechaVencimiento": "2026-07-14",
+  "valorTotal": 1190000,
+  "retenciones": [ { "impuestoId": 1, "base": 1000000, "limite": "0", "valor": 25000 } ]
+}
+
+###
+@obligacionId = {{oblig.response.body.$.data.id}}
+
+### Consultar obligación (saldo 1.165.000, estado pendiente)
+GET {{baseUrl}}/api/obligaciones-pago/{{obligacionId}}
+Authorization: Bearer {{token}}
+
+### ============================== EGRESO =======================================
+
+### Cuentas para el asiento (banco crédito / CxP débito) + periodo
+# @name ctaBancoContable
+POST {{baseUrl}}/api/cuentas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigoCuenta": "111005-{{rid}}", "nombreCuenta": "Bancos", "naturaleza": "debito", "tipoCuenta": "activo", "manejaMovimiento": true }
+
+###
+@cuentaBancoId = {{ctaBancoContable.response.body.$.data.id}}
+
+# @name ctaCxp
+POST {{baseUrl}}/api/cuentas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigoCuenta": "220501-{{rid}}", "nombreCuenta": "Proveedores nacionales", "naturaleza": "credito", "tipoCuenta": "pasivo", "manejaMovimiento": true }
+
+###
+@cuentaCxpId = {{ctaCxp.response.body.$.data.id}}
+
+# @name periodo
+POST {{baseUrl}}/api/periodos-contables
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "vigenciaId": {{vigenciaId}}, "anio": 2026, "mes": 6 }
+
+###
+@periodoId = {{periodo.response.body.$.data.id}}
+
+### Egreso (borrador) aplicado a la obligación, valor 1.165.000
+# @name egreso
+POST {{baseUrl}}/api/egresos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cuentaBancariaId": {{cuentaBancariaId}},
+  "beneficiarioId": {{proveedorId}},
+  "numero": "CE-{{rid}}",
+  "fecha": "2026-06-14",
+  "valor": 1165000,
+  "numeroCheque": "1001",
+  "descripcion": "Pago factura proveedor",
+  "obligacionPagoId": {{obligacionId}}
+}
+
+###
+@egresoId = {{egreso.response.body.$.data.id}}
+
+### Girar el egreso → obligación 'pagada' + asiento (débito CxP / crédito banco)
+POST {{baseUrl}}/api/egresos/{{egresoId}}/girar
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "cuentaBancoId": {{cuentaBancoId}}, "cuentaCxpId": {{cuentaCxpId}}, "periodoContableId": {{periodoId}} }
+
+### Verificar obligación 'pagada' (saldo 0)
+GET {{baseUrl}}/api/obligaciones-pago/{{obligacionId}}
+Authorization: Bearer {{token}}
+
+### Comprobante generado por la interfaz contable (async)
+POST {{baseUrl}}/api/comprobantes/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### Anular el egreso → obligación vuelve a 'parcial'/'pendiente' (saldo restaurado)
+POST {{baseUrl}}/api/egresos/{{egresoId}}/anular
+Authorization: Bearer {{token}}
+
+###
+GET {{baseUrl}}/api/obligaciones-pago/{{obligacionId}}
+Authorization: Bearer {{token}}
+
+### Listados
+POST {{baseUrl}}/api/egresos/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }

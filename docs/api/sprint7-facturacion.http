@@ -1,0 +1,230 @@
+### ============================================================================
+### Sprint 7 — Facturación (HU-0010): crear → emitir → (FE DIAN) → anular
+###   emitir = numera por resolución DIAN + salida de inventario (HU-0009)
+###            + asiento contable por evento (HU-0007) + evento a Cartera (Sprint 8)
+### Ejecutar EN ORDEN.
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+
+### Cliente (tercero). El demo crea el tercero del admin. SELECT id FROM tercero;
+@clienteId = 1
+### Vigencia para el periodo contable. SELECT id FROM vigencia;
+@vigenciaId = 1
+### Sufijo único por corrida (códigos no chocan al re-ejecutar).
+@rid = {{$timestamp}}
+
+### ----------------------------------------------------------------------------
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ===================== PRE-REQUISITOS (catálogos) ===========================
+
+### Producto a vender (maneja inventario)
+# @name producto
+POST {{baseUrl}}/api/productos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "FAC-PROD-{{rid}}", "nombre": "Producto facturable", "tipo": "bien", "manejaInventario": true }
+
+###
+@productoId = {{producto.response.body.$.data.id}}
+
+### Bodega de la que sale la mercancía
+# @name bodega
+POST {{baseUrl}}/api/bodegas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "BOD-FAC-{{rid}}", "nombre": "Bodega Facturación", "permiteCompra": true }
+
+###
+@bodegaId = {{bodega.response.body.$.data.id}}
+
+### Stock inicial: entrada de 100 und a costo $1.000 (para que la salida tenga existencias)
+POST {{baseUrl}}/api/movimientos-inventario
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "bodegaId": {{bodegaId}}, "productoId": {{productoId}}, "tipo": "entrada", "fecha": "2026-07-01", "cantidad": 100, "costoUnitario": 1000 }
+
+### Recalcular saldos para que el costo promedio quede disponible (COGS)
+POST {{baseUrl}}/api/saldos-inventario/recalcular
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "bodegaId": {{bodegaId}} }
+
+### Resolución DIAN (rango 1..1000, prefijo FE)
+# @name resolucion
+POST {{baseUrl}}/api/resoluciones-dian
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "numeroResolucion": "RES-{{rid}}",
+  "prefijo": "FE",
+  "facturaInicial": 1,
+  "facturaFinal": 1000,
+  "fechaInicial": "2026-01-01",
+  "fechaFinal": "2026-12-31",
+  "descripcion": "Resolución de facturación de prueba"
+}
+
+###
+@resolucionId = {{resolucion.response.body.$.data.id}}
+
+### Cuenta CxC cliente (imputable, débito)
+# @name ctaCliente
+POST {{baseUrl}}/api/cuentas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigoCuenta": "130505-{{rid}}", "nombreCuenta": "Clientes nacionales", "naturaleza": "debito", "tipoCuenta": "activo", "manejaMovimiento": true }
+
+###
+@cuentaClienteId = {{ctaCliente.response.body.$.data.id}}
+
+### Cuenta de ingreso (imputable, crédito)
+# @name ctaIngreso
+POST {{baseUrl}}/api/cuentas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigoCuenta": "413505-{{rid}}", "nombreCuenta": "Comercio al por mayor", "naturaleza": "credito", "tipoCuenta": "ingreso", "manejaMovimiento": true }
+
+###
+@cuentaIngresoId = {{ctaIngreso.response.body.$.data.id}}
+
+### Cuenta IVA generado (imputable, crédito)
+# @name ctaIva
+POST {{baseUrl}}/api/cuentas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigoCuenta": "240805-{{rid}}", "nombreCuenta": "IVA generado", "naturaleza": "credito", "tipoCuenta": "pasivo", "manejaMovimiento": true }
+
+###
+@cuentaIvaId = {{ctaIva.response.body.$.data.id}}
+
+### Periodo contable abierto (para el asiento)
+# @name periodo
+POST {{baseUrl}}/api/periodos-contables
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "vigenciaId": {{vigenciaId}}, "anio": 2026, "mes": 7 }
+
+###
+@periodoId = {{periodo.response.body.$.data.id}}
+
+### ============================= FACTURA ======================================
+
+### Crear factura borrador (1 línea: 10 und a $1.000 + IVA 19% = $1.900)
+# @name crearFactura
+POST {{baseUrl}}/api/facturas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "clienteId": {{clienteId}},
+  "resolucionDianId": {{resolucionId}},
+  "bodegaId": {{bodegaId}},
+  "fecha": "2026-07-15",
+  "fechaVencimiento": "2026-08-15",
+  "observaciones": "Factura de prueba",
+  "lineas": [
+    {
+      "productoId": {{productoId}}, "descripcion": "Venta mercancía", "cantidad": 10,
+      "valorUnitario": 1000, "porcentajeImpuesto": 19, "valorImpuesto": 1900, "discriminaIva": true
+    }
+  ]
+}
+
+###
+@facturaId = {{crearFactura.response.body.$.data.id}}
+
+### Consultar factura (estado borrador, total 11.900, sin número)
+GET {{baseUrl}}/api/facturas/{{facturaId}}
+Authorization: Bearer {{token}}
+
+### Emitir factura CON contabilidad → numera FE+consecutivo, salida inventario (10),
+### asiento (déb 11.900 cliente / créd 10.000 ingreso + créd 1.900 IVA) y evento a Cartera
+POST {{baseUrl}}/api/facturas/{{facturaId}}/emitir
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cuentaClienteId": {{cuentaClienteId}},
+  "cuentaIngresoId": {{cuentaIngresoId}},
+  "cuentaImpuestoId": {{cuentaIvaId}},
+  "periodoContableId": {{periodoId}}
+}
+
+### ========================= VERIFICACIÓN =====================================
+
+### La factura debe quedar 'emitida' con número (p.ej. FE1)
+GET {{baseUrl}}/api/facturas/{{facturaId}}
+Authorization: Bearer {{token}}
+
+### Kardex del producto → entrada 100 + salida -10 → saldo corriente 90
+GET {{baseUrl}}/api/movimientos-inventario/kardex?productoId={{productoId}}&bodegaId={{bodegaId}}
+Authorization: Bearer {{token}}
+
+### Comprobantes → la interfaz contable debió crear el asiento (origen facturacion#factura, async)
+POST {{baseUrl}}/api/comprobantes/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### Registrar factura electrónica (CUFE + acuse aceptado)
+POST {{baseUrl}}/api/facturas/{{facturaId}}/dian
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "cufe": "CUFE-{{rid}}", "estadoDian": "aceptada", "fechaAcuse": "2026-07-15", "comentarioAcuse": "Aceptada por la DIAN" }
+
+### ========================= ANULACIÓN ========================================
+
+### Anular la factura emitida → estado 'anulada' + reversa de inventario (entrada +10)
+POST {{baseUrl}}/api/facturas/{{facturaId}}/anular
+Authorization: Bearer {{token}}
+
+### Kardex tras anular → entrada 100, salida -10, entrada reversa +10 → saldo 100
+GET {{baseUrl}}/api/movimientos-inventario/kardex?productoId={{productoId}}&bodegaId={{bodegaId}}
+Authorization: Bearer {{token}}
+
+### ========================= CASOS DE ERROR ===================================
+
+### Editar una factura ya anulada → 400 "Solo se edita una factura en borrador"
+PUT {{baseUrl}}/api/facturas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": {{facturaId}}, "clienteId": {{clienteId}}, "fecha": "2026-07-15",
+  "lineas": [ { "productoId": {{productoId}}, "cantidad": 1, "valorUnitario": 1000 } ]
+}
+
+### Listar facturas (paginado)
+POST {{baseUrl}}/api/facturas/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### Listar resoluciones DIAN (el consecutivo_actual debió subir a 1)
+POST {{baseUrl}}/api/resoluciones-dian/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }

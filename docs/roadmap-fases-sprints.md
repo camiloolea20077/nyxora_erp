@@ -47,22 +47,32 @@ puerto app 8081. Pendiente: CI (build+test) y healthcheck.
 > Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`.
 - Orden de compra + líneas; recepción + líneas → entra a inventario + asiento contable (**HU-0008**).
 
-### Sprint 7 — Facturación
+### Sprint 7 — Facturación  ✅ (código entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`.
 - Factura + líneas + resolución DIAN + factura_dian; salida de inventario; evento a Cartera/Contabilidad (**HU-0010**).
 
-### Sprint 8 — Cartera + Caja
+### Sprint 8 — Cartera + Caja  ✅ (código entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`.
 - Cuenta por cobrar, acuerdos (**HU-0011**); caja, recibo (pagos + aplicación a CxC), arqueo (**HU-0012**).
+- **Interfaz de Cartera**: listener que consume `CuentaPorCobrarSolicitada` (Facturación) y registra la CxC.
 
-### Sprint 9 — Tesorería + Cuentas por Pagar
-- Cuentas bancarias, chequera, egresos, extractos, conciliación.
-- Factura proveedor (DIAN/RADIAN), obligación de pago, retenciones; pago vía egreso.
+### Sprint 9 — Tesorería + Cuentas por Pagar  ✅ (código entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`. Extractos/conciliación bancaria diferidos.
+- Cuentas bancarias, chequera, egresos (girar/anular) (**HU-0013**); extractos/conciliación diferidos.
+- Factura proveedor (DIAN/RADIAN) + eventos, obligación de pago + retenciones; pago vía egreso que reduce el saldo de la obligación (**HU-0014**).
 
-### Sprint 10 — Costos + Presupuesto
-- Recurso/costeo; rubro presupuestal, fuentes, CPC, cadena CDP→compromiso→obligación→pago, saldos/PAC.
+### Sprint 10 — Costos + Presupuesto  ✅ (código backend entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`. Frontend pendiente.
+- Costos: `recurso` ya entregado en Sprint 3 (HU-0005), sin trabajo nuevo.
+- Presupuesto (**HU-0015**): fuente de financiamiento, CPC, rubro presupuestal (jerárquico); afectación
+  (cadena CDP→compromiso→obligación→pago, append-only); saldo (apropiación + ejecución recalculable); PAC.
 
-### Sprint 11 — Activos Fijos + Contratación
-- Activo fijo, depreciación (append-only), responsables, pólizas.
-- Contrato, modalidad, cláusulas, pólizas de contrato.
+### Sprint 11 — Activos Fijos + Contratación  ✅ (código backend entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`. Frontend pendiente.
+- Activos Fijos (**HU-0016**): póliza de seguro (maestro), activo fijo, depreciación (append-only que
+  recalcula el acumulado/valor en libros), responsables y pólizas como sub-recursos.
+- Contratación (**HU-0017**): modalidad y plantilla de cláusula (catálogos), contrato (+ cláusulas que
+  se reemplazan en update), cambio de estado y pólizas de contrato (reutiliza `poliza_seguro`).
 
 ### Sprint 12 — Talento Humano
 - Empleado (satélites: estudios, familiares, historia laboral); evaluación de desempeño.

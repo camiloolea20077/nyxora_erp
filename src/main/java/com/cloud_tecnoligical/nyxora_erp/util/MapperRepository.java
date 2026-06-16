@@ -142,6 +142,19 @@ public class MapperRepository {
                             field.set(instance, null);
                         }
                     }
+                    else if (field.getType().equals(BigDecimal.class)) {
+                        if (value == null) {
+                            field.set(instance, null);
+                        } else if (value instanceof BigDecimal) {
+                            field.set(instance, (BigDecimal) value);
+                        } else if (value instanceof Number) {
+                            field.set(instance, BigDecimal.valueOf(((Number) value).doubleValue()));
+                        } else if (value instanceof String && !((String) value).isEmpty()) {
+                            field.set(instance, new BigDecimal((String) value));
+                        } else {
+                            field.set(instance, null);
+                        }
+                    }
                      else {
                         // Handle other types as needed
                     }

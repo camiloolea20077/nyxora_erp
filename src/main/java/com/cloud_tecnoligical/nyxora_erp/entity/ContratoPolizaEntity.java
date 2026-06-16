@@ -1,0 +1,25 @@
+package com.cloud_tecnoligical.nyxora_erp.entity;
+
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/** Vínculo contrato ↔ póliza de seguro (R2DBC). */
+@Table("contrato_poliza")
+@Getter
+@Setter
+public class ContratoPolizaEntity {
+
+    @Id
+    private Long id;
+
+    @Column("contrato_id")      private Long contrato_id;
+    @Column("poliza_seguro_id") private Long poliza_seguro_id;
+    @Column("created_at")       private LocalDateTime created_at;
+    @Column("deleted_at")       private LocalDateTime deleted_at;
+}

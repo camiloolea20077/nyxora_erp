@@ -1,0 +1,182 @@
+### ============================================================================
+### Sprint 8 — Cartera (HU-0011) + Caja (HU-0012)
+###   CxC (manual o desde factura por evento) → acuerdo de pago
+###   caja → abrir → recibo (aplica a CxC) → arqueo
+### Ejecutar EN ORDEN.
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+
+### Cliente (tercero). SELECT id FROM tercero;
+@clienteId = 1
+@vigenciaId = 1
+@rid = {{$timestamp}}
+
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ============================ CARTERA =======================================
+
+### Crear CxC manual (saldo inicial 100.000). Nota: las facturas emitidas (HU-0010)
+### crean su CxC automáticamente vía el listener de cartera.
+# @name cxc
+POST {{baseUrl}}/api/cuentas-cobrar
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "clienteId": {{clienteId}}, "fechaEmision": "2026-06-14", "fechaVencimiento": "2026-07-14", "valorTotal": 100000 }
+
+###
+@cxcId = {{cxc.response.body.$.data.id}}
+
+### Consultar CxC (estado vigente, saldo 100.000)
+GET {{baseUrl}}/api/cuentas-cobrar/{{cxcId}}
+Authorization: Bearer {{token}}
+
+### Acuerdo de pago en 2 cuotas (la CxC pasa a 'en_acuerdo')
+# @name acuerdo
+POST {{baseUrl}}/api/acuerdos-pago
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cuentaPorCobrarId": {{cxcId}},
+  "fecha": "2026-06-14",
+  "cuotas": [
+    { "valor": 50000, "fechaAplicacion": "2026-07-14" },
+    { "valor": 50000, "fechaAplicacion": "2026-08-14" }
+  ]
+}
+
+###
+@acuerdoId = {{acuerdo.response.body.$.data.id}}
+
+### Anular el acuerdo (la CxC vuelve a 'vigente') — para poder recaudar en este demo
+POST {{baseUrl}}/api/acuerdos-pago/{{acuerdoId}}/anular
+Authorization: Bearer {{token}}
+
+### ============================== CAJA ========================================
+
+### Cuenta de caja (débito) y cuenta CxC (crédito) para el asiento del recibo
+# @name ctaCaja
+POST {{baseUrl}}/api/cuentas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigoCuenta": "110505-{{rid}}", "nombreCuenta": "Caja general", "naturaleza": "debito", "tipoCuenta": "activo", "manejaMovimiento": true }
+
+###
+@cuentaCajaId = {{ctaCaja.response.body.$.data.id}}
+
+# @name ctaCxc
+POST {{baseUrl}}/api/cuentas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigoCuenta": "130505-{{rid}}", "nombreCuenta": "Clientes nacionales", "naturaleza": "debito", "tipoCuenta": "activo", "manejaMovimiento": true }
+
+###
+@cuentaCxcId = {{ctaCxc.response.body.$.data.id}}
+
+### Periodo contable (para el asiento)
+# @name periodo
+POST {{baseUrl}}/api/periodos-contables
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "vigenciaId": {{vigenciaId}}, "anio": 2026, "mes": 6 }
+
+###
+@periodoId = {{periodo.response.body.$.data.id}}
+
+### Crear caja
+# @name caja
+POST {{baseUrl}}/api/cajas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "CAJA-{{rid}}", "nombre": "Caja principal" }
+
+###
+@cajaId = {{caja.response.body.$.data.id}}
+
+### Abrir la caja con base inicial 20.000
+POST {{baseUrl}}/api/cajas/{{cajaId}}/abrir
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "saldoInicial": 20000 }
+
+### Recibo de caja: paga 60.000 en efectivo y aplica 60.000 a la CxC (saldo → 40.000)
+# @name recibo
+POST {{baseUrl}}/api/recibos-caja
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cajaId": {{cajaId}},
+  "clienteId": {{clienteId}},
+  "fecha": "2026-06-14",
+  "observaciones": "Abono cliente",
+  "pagos": [ { "valor": 60000 } ],
+  "lineas": [ { "cuentaPorCobrarId": {{cxcId}}, "valorAplicado": 60000 } ],
+  "cuentaCajaId": {{cuentaCajaId}},
+  "cuentaCxcId": {{cuentaCxcId}},
+  "periodoContableId": {{periodoId}}
+}
+
+###
+@reciboId = {{recibo.response.body.$.data.id}}
+
+### Verificar la CxC: saldo 40.000, estado vigente
+GET {{baseUrl}}/api/cuentas-cobrar/{{cxcId}}
+Authorization: Bearer {{token}}
+
+### Comprobante generado por la interfaz contable (async)
+POST {{baseUrl}}/api/comprobantes/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### Arqueo: declaro 80.000 (20.000 base + 60.000 recaudado) → diferencia 0
+POST {{baseUrl}}/api/arqueos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "cajaId": {{cajaId}}, "valorDeclarado": 80000, "observaciones": "Cuadre del turno" }
+
+### Cerrar la caja
+POST {{baseUrl}}/api/cajas/{{cajaId}}/cerrar
+Authorization: Bearer {{token}}
+
+### ========================= REVERSA / ERRORES =================================
+
+### Anular el recibo → reversa la aplicación (la CxC vuelve a saldo 100.000)
+POST {{baseUrl}}/api/recibos-caja/{{reciboId}}/anular
+Authorization: Bearer {{token}}
+
+###
+GET {{baseUrl}}/api/cuentas-cobrar/{{cxcId}}
+Authorization: Bearer {{token}}
+
+### Listados
+POST {{baseUrl}}/api/cuentas-cobrar/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+###
+POST {{baseUrl}}/api/recibos-caja/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }

@@ -180,10 +180,10 @@ public class RecepcionServiceImpl implements RecepcionService {
         MovimientoInventarioEntity m = new MovimientoInventarioEntity();
         m.setEmpresa_id(t.getEmpresaId());
         m.setBodega_id(rec.getBodega_id());
-        m.setUbicacion_id(rl.getUbicacionId());
+        m.setUbicacion_id(nzId(rl.getUbicacionId()));
         m.setProducto_id(rl.getProductoId());
-        m.setProducto_variante_id(rl.getProductoVarianteId());
-        m.setLote_id(rl.getLoteId());
+        m.setProducto_variante_id(nzId(rl.getProductoVarianteId()));
+        m.setLote_id(nzId(rl.getLoteId()));
         m.setTipo("entrada");
         m.setFecha(rec.getFecha());
         m.setCantidad(rl.getCantidadRecibida());            // entrada → positiva
@@ -285,5 +285,10 @@ public class RecepcionServiceImpl implements RecepcionService {
 
     private static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    /** Normaliza un id de FK opcional: 0 (NULL mapeado por MapperRepository) → null para no violar FKs. */
+    private static Long nzId(Long v) {
+        return (v == null || v == 0L) ? null : v;
     }
 }

@@ -1,0 +1,144 @@
+### ============================================================================
+### Sprint 10 — Presupuesto (HU-0015)
+###   rubro + apropiación → cadena CDP→compromiso→obligación→pago → recalcular saldo → PAC
+###   (Costos: 'recurso' ya entregado en Sprint 3). Ejecutar EN ORDEN.
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+@vigenciaId = 1
+@rid = {{$timestamp}}
+
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ===================== CATÁLOGOS DE PRESUPUESTO =============================
+
+### Fuente de financiamiento
+POST {{baseUrl}}/api/fuentes-financiamiento
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "FF-{{rid}}", "nombre": "Recursos propios", "tipoRecurso": "propio" }
+
+### CPC
+POST {{baseUrl}}/api/cpc
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "CPC-{{rid}}", "nombre": "Servicios de aseo", "manejaMovimiento": true }
+
+### Rubro presupuestal (imputable, maneja_movimiento)
+# @name rubro
+POST {{baseUrl}}/api/rubros-presupuestales
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "vigenciaId": {{vigenciaId}}, "tipoRubro": "gasto", "codigoRubro": "2.1.1-{{rid}}", "nombreRubro": "Adquisición de bienes", "manejaMovimiento": true }
+
+###
+@rubroId = {{rubro.response.body.$.data.id}}
+
+### ========================= APROPIACIÓN ======================================
+
+### Apropiar el rubro (plan inicial 100M + adiciones 20M → apropiación neta 120M)
+POST {{baseUrl}}/api/saldos-presupuestales/apropiar
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "rubroPresupuestalId": {{rubroId}}, "anio": 2026, "planInicial": 100000000, "adiciones": 20000000 }
+
+### ===================== CADENA DE EJECUCIÓN ==================================
+
+### Disponibilidad (CDP) 50M
+POST {{baseUrl}}/api/afectaciones-presupuestales
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "rubroPresupuestalId": {{rubroId}}, "tipoOperacion": "disponibilidad", "valor": 50000000, "descripcion": "CDP compra equipos" }
+
+### Compromiso 40M
+POST {{baseUrl}}/api/afectaciones-presupuestales
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "rubroPresupuestalId": {{rubroId}}, "tipoOperacion": "compromiso", "valor": 40000000, "descripcion": "Contrato proveedor" }
+
+### Obligación 30M
+POST {{baseUrl}}/api/afectaciones-presupuestales
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "rubroPresupuestalId": {{rubroId}}, "tipoOperacion": "obligacion", "valor": 30000000, "descripcion": "Factura recibida" }
+
+### Pago 30M
+POST {{baseUrl}}/api/afectaciones-presupuestales
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "rubroPresupuestalId": {{rubroId}}, "tipoOperacion": "pago", "valor": 30000000, "descripcion": "Pago al proveedor" }
+
+### Recalcular el saldo (consolida la ejecución desde las afectaciones)
+POST {{baseUrl}}/api/saldos-presupuestales/recalcular?rubroId={{rubroId}}&anio=2026
+Authorization: Bearer {{token}}
+
+### Consultar el saldo → apropiacionNeta 120M, disponibilidad 50M, compromiso 40M, obligacion 30M, pagado 30M
+GET {{baseUrl}}/api/saldos-presupuestales?rubroId={{rubroId}}&anio=2026
+Authorization: Bearer {{token}}
+
+### Listar afectaciones del rubro
+POST {{baseUrl}}/api/afectaciones-presupuestales/rubro/{{rubroId}}/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 20 }
+
+### ============================== PAC =========================================
+
+### Definir PAC de enero y febrero
+POST {{baseUrl}}/api/pac-presupuestal
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "rubroPresupuestalId": {{rubroId}}, "anio": 2026, "mes": 1, "valor": 10000000 }
+
+###
+POST {{baseUrl}}/api/pac-presupuestal
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "rubroPresupuestalId": {{rubroId}}, "anio": 2026, "mes": 2, "valor": 15000000 }
+
+### Consultar el PAC del rubro para el año
+GET {{baseUrl}}/api/pac-presupuestal?rubroId={{rubroId}}&anio=2026
+Authorization: Bearer {{token}}
+
+### ========================= LISTADOS / ERRORES ===============================
+
+### Afectación sobre rubro NO imputable → 400 (crear rubro padre sin maneja_movimiento)
+# @name rubroPadre
+POST {{baseUrl}}/api/rubros-presupuestales
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "vigenciaId": {{vigenciaId}}, "tipoRubro": "gasto", "codigoRubro": "2-{{rid}}", "nombreRubro": "Gastos (agregado)", "manejaMovimiento": false }
+
+###
+POST {{baseUrl}}/api/afectaciones-presupuestales
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "rubroPresupuestalId": {{rubroPadre.response.body.$.data.id}}, "tipoOperacion": "compromiso", "valor": 1000 }
+
+### Listar rubros / fuentes / cpc
+POST {{baseUrl}}/api/rubros-presupuestales/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }

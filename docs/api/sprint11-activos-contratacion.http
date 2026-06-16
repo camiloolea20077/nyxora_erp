@@ -1,0 +1,160 @@
+### ============================================================================
+### Sprint 11 — Activos Fijos (HU-0016) + Contratación (HU-0017)
+###   póliza → activo fijo → responsables/pólizas → depreciación (append-only)
+###   modalidad/cláusula plantilla → contrato (+cláusulas) → estado → póliza
+###   Ejecutar EN ORDEN.
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+@rid = {{$timestamp}}
+
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ===================== ACTIVOS FIJOS (HU-0016) =============================
+
+### Póliza de seguro (maestro)
+# @name poliza
+POST {{baseUrl}}/api/polizas-seguro
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "numero": "POL-{{rid}}", "tipo": "todo_riesgo", "valorAsegurado": 50000000 }
+
+###
+@polizaId = {{poliza.response.body.$.data.id}}
+
+### Activo fijo
+# @name activo
+POST {{baseUrl}}/api/activos-fijos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codigo": "AF-{{rid}}",
+  "nombre": "Computador portátil",
+  "numeroSerie": "SN-{{rid}}",
+  "valorCompra": 4000000,
+  "vidaUtil": 60,
+  "metodoDepreciacion": "linea_recta"
+}
+
+###
+@activoId = {{activo.response.body.$.data.id}}
+
+### Consultar activo (con responsables y pólizas)
+GET {{baseUrl}}/api/activos-fijos/{{activoId}}
+Authorization: Bearer {{token}}
+
+### Asignar responsable (tercero 1 debe existir en la empresa)
+POST {{baseUrl}}/api/activos-fijos/{{activoId}}/responsables
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "terceroId": 1 }
+
+### Asignar póliza
+POST {{baseUrl}}/api/activos-fijos/{{activoId}}/polizas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "polizaSeguroId": {{polizaId}} }
+
+### Registrar depreciación (append-only) → recalcula acumulado y valor_actual del activo
+POST {{baseUrl}}/api/depreciaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "activoFijoId": {{activoId}}, "fechaAplicacion": "2026-06-30", "valorDepreciacion": 66666.67, "periodoAmortizacion": 1 }
+
+### Listar depreciaciones del activo
+POST {{baseUrl}}/api/depreciaciones/activo/{{activoId}}/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### Listar activos fijos
+POST {{baseUrl}}/api/activos-fijos/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10, "search": "" }
+
+### Remover póliza del activo
+DELETE {{baseUrl}}/api/activos-fijos/{{activoId}}/polizas/{{polizaId}}
+Authorization: Bearer {{token}}
+
+### ===================== CONTRATACIÓN (HU-0017) =============================
+
+### Modalidad de contrato
+# @name modalidad
+POST {{baseUrl}}/api/modalidades-contrato
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "MOD-{{rid}}", "nombre": "Contratación directa" }
+
+###
+@modalidadId = {{modalidad.response.body.$.data.id}}
+
+### Plantilla de cláusula
+POST {{baseUrl}}/api/clausulas-plantilla
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "nombre": "Objeto", "tipoClausula": "objeto", "numero": "1", "texto": "El presente contrato tiene por objeto..." }
+
+### Contrato (con cláusulas)
+# @name contrato
+POST {{baseUrl}}/api/contratos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "numero": "CTR-{{rid}}",
+  "nombre": "Suministro de papelería",
+  "tipoContrato": "suministro",
+  "modalidadId": {{modalidadId}},
+  "objeto": "Suministro de elementos de papelería",
+  "valor": 12000000,
+  "clausulas": [
+    { "numero": "1", "orden": "1", "nombre": "Objeto", "texto": "Suministrar papelería." },
+    { "numero": "2", "orden": "2", "nombre": "Valor", "texto": "El valor del contrato es..." }
+  ]
+}
+
+###
+@contratoId = {{contrato.response.body.$.data.id}}
+
+### Consultar contrato (con cláusulas y pólizas)
+GET {{baseUrl}}/api/contratos/{{contratoId}}
+Authorization: Bearer {{token}}
+
+### Cambiar estado del contrato
+POST {{baseUrl}}/api/contratos/{{contratoId}}/estado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "estado": "suscrito" }
+
+### Asignar póliza al contrato
+POST {{baseUrl}}/api/contratos/{{contratoId}}/polizas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "polizaSeguroId": {{polizaId}} }
+
+### Listar contratos
+POST {{baseUrl}}/api/contratos/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10, "search": "" }
