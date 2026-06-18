@@ -41,6 +41,7 @@ public class CatalogoQueryRepository {
         Map.entry("forma-pago", new CatalogoDef("forma_pago", null, true, true)),
         Map.entry("banco", new CatalogoDef("banco", null, true, true)),
         Map.entry("tipo-cuenta-bancaria", new CatalogoDef("tipo_cuenta_bancaria", null, true, true)),
+        Map.entry("nivel-estudio", new CatalogoDef("nivel_estudio", null, true, true)),
         // unidad_medida es un catálogo simple sin columna 'activo'
         Map.entry("unidad-medida", new CatalogoDef("unidad_medida", null, true, false))
     );

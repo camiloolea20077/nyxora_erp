@@ -1,0 +1,50 @@
+### ============================================================================
+### Sprint 16 — Cierres y reportería (HU-0023)
+###   estados financieros · cartera · ejecución presupuestal · cierre orquestado
+###   Requiere datos contables (comprobantes confirmados) y presupuestales.
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+@periodoId = 1
+@vigenciaId = 1
+
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ===================== REPORTES =====================
+
+### Balance general del periodo
+GET {{baseUrl}}/api/reportes/balance-general?periodoContableId={{periodoId}}
+Authorization: Bearer {{token}}
+
+### Estado de resultados del periodo
+GET {{baseUrl}}/api/reportes/estado-resultados?periodoContableId={{periodoId}}
+Authorization: Bearer {{token}}
+
+### Cartera (CxC) por cliente
+GET {{baseUrl}}/api/reportes/cartera
+Authorization: Bearer {{token}}
+
+### Ejecución presupuestal por rubro (de una vigencia)
+GET {{baseUrl}}/api/reportes/ejecucion-presupuestal?vigenciaId={{vigenciaId}}
+Authorization: Bearer {{token}}
+
+### ===================== CIERRE ORQUESTADO =====================
+
+### (Opcional) recalcular saldos del periodo antes de reportar
+POST {{baseUrl}}/api/saldos/recalcular
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "periodoContableId": {{periodoId}} }
+
+### Cerrar el periodo (valida borradores → recalcula saldos → cierra)
+POST {{baseUrl}}/api/cierres/periodo/{{periodoId}}
+Authorization: Bearer {{token}}

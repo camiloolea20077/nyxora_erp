@@ -74,22 +74,30 @@ puerto app 8081. Pendiente: CI (build+test) y healthcheck.
 - Contratación (**HU-0017**): modalidad y plantilla de cláusula (catálogos), contrato (+ cláusulas que
   se reemplazan en update), cambio de estado y pólizas de contrato (reutiliza `poliza_seguro`).
 
-### Sprint 12 — Talento Humano
-- Empleado (satélites: estudios, familiares, historia laboral); evaluación de desempeño.
+### Sprint 12 — Talento Humano  ✅ (código backend entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`. Frontend pendiente.
+- Empleado (= tercero) con satélites: estudios, familiares, historia laboral; evaluación de desempeño (**HU-0018**).
+  `nivel_estudio` expuesto vía catálogo genérico (`/api/catalogos/nivel-estudio`).
 
-### Sprint 13 — Nómina I
-- Cargo, grupo, vinculación, concepto (fórmulas), novedades (incl. embargos).
+### Sprint 13 — Nómina I  ✅ (código backend entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`. Frontend pendiente.
+- Cargo, grupo de nómina, concepto (fórmula + clase), vinculación del empleado, novedades (incl. embargos, con anular) (**HU-0019**).
 
-### Sprint 14 — Nómina II
-- Liquidación + detalle (append-only), aportes PILA; interfaz contable/presupuestal por evento.
+### Sprint 14 — Nómina II  ✅ (código backend entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`. Frontend pendiente.
+> Motor de fórmulas (valores desde novedades/sueldo en v1) e interfaz presupuestal por evento, diferidos.
+- Liquidación + detalle (append-only), aportes PILA; **liquidar** y **contabilizar** (interfaz contable por evento `AsientoContableSolicitado`) (**HU-0020**).
 
-### Sprint 15 — Académico + Jurídico
-- Programas, asignaturas, grupos, carga docente → evento a Nómina (catedráticos).
-- Procesos disciplinarios (faltas, descargos, notificaciones).
+### Sprint 15 — Académico + Jurídico  ✅ (código backend entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`. Frontend pendiente.
+- Programas, asignaturas (+ asociación a programa), grupos, carga docente → evento a Nómina (`CargaDocenteRegistrada`) (**HU-0021**).
+- Procesos disciplinarios con faltas/descargos/notificaciones + cambio de estado; catálogos de clasificación y falta (**HU-0022**).
 
-### Sprint 16 — Cierres, Reportería y Hardening
-- Cierre por periodo/vigencia orquestado; estados financieros básicos; reportes cartera/presupuesto.
-- Swagger completo, revisión `ciberseguridad`, índices/tuning, pruebas de carga.
+### Sprint 16 — Cierres, Reportería y Hardening  ✅ (código backend entregado)
+> Deuda técnica pendiente del DoD: tests WebTestClient y revisión `ciberseguridad`. Frontend pendiente.
+> Cierre de vigencia (anual), edades de cartera por tramos y tuning/pruebas de carga, diferidos.
+- Cierre de periodo **orquestado** (valida borradores → recalcula saldos → cierra); estados financieros básicos
+  (balance general, estado de resultados); reportes de cartera y ejecución presupuestal (**HU-0023**).
 
 ---
 

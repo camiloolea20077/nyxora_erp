@@ -1,0 +1,170 @@
+### ============================================================================
+### Sprint 15 — Académico (HU-0021) + Jurídico (HU-0022)
+###   programa → asignatura(+programa) → grupo → carga docente → evento a nómina
+###   clasificación → falta → proceso disciplinario (+faltas/descargos/notificaciones)
+###   Ejecutar EN ORDEN. Requiere vinculaciones (Sprint 13) y conceptos de nómina.
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+@rid = {{$timestamp}}
+@vinculacionId = 1
+
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ===================== ACADÉMICO (HU-0021) =================================
+
+### Programa académico
+# @name programa
+POST {{baseUrl}}/api/programas-academicos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "PROG-{{rid}}", "nombre": "Ingeniería de Sistemas", "tipoPrograma": "pregrado", "modalidad": "presencial" }
+
+###
+@programaId = {{programa.response.body.$.data.id}}
+
+### Asignatura
+# @name asignatura
+POST {{baseUrl}}/api/asignaturas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "ASI-{{rid}}", "nombre": "Programación I" }
+
+###
+@asignaturaId = {{asignatura.response.body.$.data.id}}
+
+### Asociar asignatura a programa
+# @name asigprog
+POST {{baseUrl}}/api/asignaturas/{{asignaturaId}}/programas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "programaAcademicoId": {{programaId}}, "semestre": 1, "creditos": 3 }
+
+###
+@asignaturaProgramaId = {{asigprog.response.body.$.data.id}}
+
+### Listar programas de la asignatura
+GET {{baseUrl}}/api/asignaturas/{{asignaturaId}}/programas
+Authorization: Bearer {{token}}
+
+### Grupo académico
+# @name grupo
+POST {{baseUrl}}/api/grupos-academicos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "programaAcademicoId": {{programaId}}, "codigo": "G1-{{rid}}", "nombre": "Grupo 1", "periodo": "2026-1" }
+
+###
+@grupoId = {{grupo.response.body.$.data.id}}
+
+### Carga académica (docente) con detalle
+# @name carga
+POST {{baseUrl}}/api/cargas-academicas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vinculacionId": {{vinculacionId}},
+  "numeroActoAdministrativo": "RES-{{rid}}",
+  "fechaActoAdministrativo": "2026-01-15",
+  "detalle": [
+    { "asignaturaProgramaId": {{asignaturaProgramaId}}, "grupoAcademicoId": {{grupoId}}, "horas": 48 }
+  ]
+}
+
+###
+@cargaId = {{carga.response.body.$.data.id}}
+
+### Consultar carga (con detalle)
+GET {{baseUrl}}/api/cargas-academicas/{{cargaId}}
+Authorization: Bearer {{token}}
+
+### Generar novedad a nómina (concepto de horas cátedra + valor por hora)
+### Ajusta conceptoNominaId a un concepto existente (clase devengado).
+POST {{baseUrl}}/api/cargas-academicas/{{cargaId}}/generar-novedad
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "conceptoNominaId": 1, "valorHora": 45000 }
+
+### ===================== JURÍDICO (HU-0022) =================================
+
+### Clasificación de falta
+# @name clasif
+POST {{baseUrl}}/api/clasificaciones-falta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "CL-{{rid}}", "nombre": "Faltas graves" }
+
+###
+@clasifId = {{clasif.response.body.$.data.id}}
+
+### Falta
+# @name falta
+POST {{baseUrl}}/api/faltas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "clasificacionFaltaId": {{clasifId}}, "codigo": "F-{{rid}}", "nombre": "Inasistencia injustificada", "caducidadDias": 90 }
+
+###
+@faltaId = {{falta.response.body.$.data.id}}
+
+### Proceso disciplinario
+# @name proceso
+POST {{baseUrl}}/api/procesos-disciplinarios
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "fecha": "2026-06-17", "vinculacionId": {{vinculacionId}}, "descripcion": "Presunta inasistencia" }
+
+###
+@procesoId = {{proceso.response.body.$.data.id}}
+
+### Imputar falta
+POST {{baseUrl}}/api/procesos-disciplinarios/{{procesoId}}/faltas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "faltaId": {{faltaId}} }
+
+### Registrar descargo
+POST {{baseUrl}}/api/procesos-disciplinarios/{{procesoId}}/descargos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "fecha": "2026-06-20", "texto": "El empleado presenta incapacidad médica." }
+
+### Registrar notificación
+POST {{baseUrl}}/api/procesos-disciplinarios/{{procesoId}}/notificaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "fecha": "2026-06-18", "tipo": "personal", "texto": "Notificación de apertura del proceso." }
+
+### Cambiar estado del proceso
+POST {{baseUrl}}/api/procesos-disciplinarios/{{procesoId}}/estado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "estado": "descargos" }
+
+### Listar procesos
+POST {{baseUrl}}/api/procesos-disciplinarios/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10, "search": "" }

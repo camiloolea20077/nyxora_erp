@@ -11,6 +11,7 @@ import lombok.Setter;
 public class CuentaBancariaResponseDto {
     private Long id;
     private Long bancoId;
+    private String bancoNombre;
     private Long tipoCuentaBancariaId;
     private String numeroCuenta;
     private Long cuentaContableId;

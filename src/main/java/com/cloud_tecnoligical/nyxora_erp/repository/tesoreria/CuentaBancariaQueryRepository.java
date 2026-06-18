@@ -39,11 +39,14 @@ public class CuentaBancariaQueryRepository {
 
     public Mono<CuentaBancariaResponseDto> findActiveById(Long id, Long empresaId) {
         return db.sql("""
-                SELECT c.id AS "id", c.banco_id AS "bancoId", c.tipo_cuenta_bancaria_id AS "tipoCuentaBancariaId",
+                SELECT c.id AS "id", c.banco_id AS "bancoId", b.nombre AS "bancoNombre",
+                       c.tipo_cuenta_bancaria_id AS "tipoCuentaBancariaId",
                        c.numero_cuenta AS "numeroCuenta", c.cuenta_contable_id AS "cuentaContableId",
                        c.maneja_sobregiro AS "manejaSobregiro", c.acepta_transferencias AS "aceptaTransferencias",
                        c.fecha_expiracion AS "fechaExpiracion", c.activo AS "active", c.created_at AS "createdAt"
-                FROM cuenta_bancaria c WHERE c.id=:id AND c.empresa_id=:e AND c.deleted_at IS NULL LIMIT 1
+                FROM cuenta_bancaria c
+                LEFT JOIN tercero b ON b.id = c.banco_id
+                WHERE c.id=:id AND c.empresa_id=:e AND c.deleted_at IS NULL LIMIT 1
                 """)
             .bind("id", id).bind("e", empresaId)
             .fetch().one()
@@ -60,13 +63,16 @@ public class CuentaBancariaQueryRepository {
         String order = "DESC".equalsIgnoreCase(request.getOrder()) ? "DESC" : "ASC";
 
         StringBuilder sql = new StringBuilder("""
-                SELECT c.id AS "id", c.banco_id AS "bancoId", c.tipo_cuenta_bancaria_id AS "tipoCuentaBancariaId",
+                SELECT c.id AS "id", c.banco_id AS "bancoId", b.nombre AS "bancoNombre",
+                       c.tipo_cuenta_bancaria_id AS "tipoCuentaBancariaId",
                        c.numero_cuenta AS "numeroCuenta", c.maneja_sobregiro AS "manejaSobregiro",
                        c.acepta_transferencias AS "aceptaTransferencias", c.activo AS "active", COUNT(*) OVER() AS total_rows
-                FROM cuenta_bancaria c WHERE c.empresa_id=:e AND c.deleted_at IS NULL
+                FROM cuenta_bancaria c
+                LEFT JOIN tercero b ON b.id = c.banco_id
+                WHERE c.empresa_id=:e AND c.deleted_at IS NULL
                 """);
         if (search != null && !search.isEmpty()) {
-            sql.append(" AND c.numero_cuenta LIKE :search ");
+            sql.append(" AND (c.numero_cuenta LIKE :search OR LOWER(b.nombre) LIKE LOWER(:search)) ");
         }
         sql.append(" ORDER BY c.").append(orderBy).append(" ").append(order);
         sql.append(" OFFSET :offset LIMIT :limit");

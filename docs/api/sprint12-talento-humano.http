@@ -1,0 +1,161 @@
+### ============================================================================
+### Sprint 12 — Talento Humano (HU-0018)
+###   empleado (= tercero) → estudios / familiares / historia laboral
+###   programa de evaluación → evaluación de desempeño
+###   Ejecutar EN ORDEN. El empleadoId debe ser un tercero existente en la empresa.
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+@rid = {{$timestamp}}
+@empleadoId = 1
+
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ===================== CATÁLOGO NIVEL DE ESTUDIO ===========================
+
+### Listar niveles de estudio (catálogo global)
+POST {{baseUrl}}/api/catalogos/nivel-estudio/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 20, "search": "" }
+
+### ===================== SATÉLITES DEL EMPLEADO =============================
+
+### Agregar estudio
+# @name estudio
+POST {{baseUrl}}/api/empleados/{{empleadoId}}/estudios
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nivelEstudioId": 1,
+  "institucion": "Universidad Nacional",
+  "titulo": "Ingeniería de Sistemas",
+  "fechaInicial": "2010-01-15",
+  "fechaFinal": "2015-06-30",
+  "fechaGrado": "2015-12-10",
+  "semestresAprobados": 10,
+  "convalidado": false
+}
+
+###
+@estudioId = {{estudio.response.body.$.data.id}}
+
+### Listar estudios del empleado
+GET {{baseUrl}}/api/empleados/{{empleadoId}}/estudios
+Authorization: Bearer {{token}}
+
+### Actualizar estudio
+PUT {{baseUrl}}/api/empleados/{{empleadoId}}/estudios
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "id": {{estudioId}}, "titulo": "Ingeniería de Sistemas (actualizado)", "convalidado": true }
+
+### Agregar familiar
+# @name familiar
+POST {{baseUrl}}/api/empleados/{{empleadoId}}/familiares
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombreApellido": "María Pérez",
+  "fechaNacimiento": "2012-03-20",
+  "parentesco": "hija",
+  "aCargo": true,
+  "vivo": true,
+  "convive": true,
+  "dependienteRetencion": true
+}
+
+###
+@familiarId = {{familiar.response.body.$.data.id}}
+
+### Listar familiares
+GET {{baseUrl}}/api/empleados/{{empleadoId}}/familiares
+Authorization: Bearer {{token}}
+
+### Agregar historia laboral
+# @name historia
+POST {{baseUrl}}/api/empleados/{{empleadoId}}/historias-laborales
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombreEmpresa": "Acme S.A.",
+  "cargo": "Desarrollador",
+  "tipoContrato": "termino_fijo",
+  "fechaInicio": "2016-01-01",
+  "fechaFinal": "2019-12-31",
+  "jefeInmediato": "Juan Gómez",
+  "esPublico": false
+}
+
+###
+@historiaId = {{historia.response.body.$.data.id}}
+
+### Listar historia laboral
+GET {{baseUrl}}/api/empleados/{{empleadoId}}/historias-laborales
+Authorization: Bearer {{token}}
+
+### ===================== EVALUACIÓN DE DESEMPEÑO ============================
+
+### Programa de evaluación
+# @name programa
+POST {{baseUrl}}/api/evaluacion-programas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "EVAL-{{rid}}", "nombre": "Evaluación anual 2026", "fechaInicial": "2026-01-01", "fechaFinal": "2026-12-31" }
+
+###
+@programaId = {{programa.response.body.$.data.id}}
+
+### Registrar evaluación de desempeño
+# @name evaluacion
+POST {{baseUrl}}/api/evaluaciones-desempeno
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "evaluacionProgramaId": {{programaId}},
+  "empleadoId": {{empleadoId}},
+  "tipoEvaluacion": "anual",
+  "fechaInicial": "2026-06-01T08:00:00",
+  "fechaFinal": "2026-06-01T10:00:00",
+  "calificacion": 87.5
+}
+
+###
+@evaluacionId = {{evaluacion.response.body.$.data.id}}
+
+### Consultar evaluación
+GET {{baseUrl}}/api/evaluaciones-desempeno/{{evaluacionId}}
+Authorization: Bearer {{token}}
+
+### Listar evaluaciones del empleado
+POST {{baseUrl}}/api/evaluaciones-desempeno/list?empleadoId={{empleadoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### Listar programas de evaluación
+POST {{baseUrl}}/api/evaluacion-programas/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10, "search": "" }
+
+### Eliminar (lógico) estudio
+DELETE {{baseUrl}}/api/empleados/{{empleadoId}}/estudios/{{estudioId}}
+Authorization: Bearer {{token}}

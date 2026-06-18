@@ -1,0 +1,179 @@
+### ============================================================================
+### Sprint 13 — Nómina I (HU-0019)
+###   cargo · grupo_nomina · concepto_nomina · vinculacion · novedad_nomina
+###   Ejecutar EN ORDEN. El empleadoId debe ser un tercero (rol empleado) de la empresa.
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+@rid = {{$timestamp}}
+@empleadoId = 1
+
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### ===================== CARGOS =============================================
+
+### Crear cargo
+# @name cargo
+POST {{baseUrl}}/api/cargos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codigo": "CAR-{{rid}}",
+  "nombre": "Desarrollador Senior",
+  "nivelCargo": "profesional",
+  "grado": "3",
+  "tipoRemuneracion": "salario",
+  "sueldoBasico": 5000000,
+  "sueldoMaximo": 7000000
+}
+
+###
+@cargoId = {{cargo.response.body.$.data.id}}
+
+### Listar cargos
+POST {{baseUrl}}/api/cargos/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10, "search": "" }
+
+### ===================== GRUPOS DE NÓMINA ==================================
+
+### Crear grupo de nómina
+# @name grupo
+POST {{baseUrl}}/api/grupos-nomina
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "GRP-{{rid}}", "nombre": "Administrativos", "frecuenciaPago": "mensual" }
+
+###
+@grupoId = {{grupo.response.body.$.data.id}}
+
+### ===================== CONCEPTOS =========================================
+
+### Crear concepto (devengado)
+# @name concepto
+POST {{baseUrl}}/api/conceptos-nomina
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "codigo": "CON-{{rid}}",
+  "nombre": "Sueldo básico",
+  "frecuencia": "mensual",
+  "clase": "devengado",
+  "formula": "SUELDO"
+}
+
+###
+@conceptoId = {{concepto.response.body.$.data.id}}
+
+### Crear concepto (deducción para embargo)
+# @name conceptoEmbargo
+POST {{baseUrl}}/api/conceptos-nomina
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "EMB-{{rid}}", "nombre": "Embargo judicial", "frecuencia": "mensual", "clase": "deduccion" }
+
+###
+@conceptoEmbargoId = {{conceptoEmbargo.response.body.$.data.id}}
+
+### Listar conceptos por clase
+POST {{baseUrl}}/api/conceptos-nomina/list?clase=devengado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### ===================== VINCULACIÓN =======================================
+
+### Crear vinculación
+# @name vinculacion
+POST {{baseUrl}}/api/vinculaciones
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "empleadoId": {{empleadoId}},
+  "cargoId": {{cargoId}},
+  "grupoNominaId": {{grupoId}},
+  "codigo": "VIN-{{rid}}",
+  "fecha": "2026-01-01",
+  "tipoVinculacion": "planta",
+  "tipoContrato": "termino_indefinido",
+  "sueldo": 5000000,
+  "horaTrabajo": 8,
+  "frecuenciaPago": "mensual"
+}
+
+###
+@vinculacionId = {{vinculacion.response.body.$.data.id}}
+
+### Consultar vinculación
+GET {{baseUrl}}/api/vinculaciones/{{vinculacionId}}
+Authorization: Bearer {{token}}
+
+### Listar vinculaciones del empleado
+POST {{baseUrl}}/api/vinculaciones/list?empleadoId={{empleadoId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### ===================== NOVEDADES =========================================
+
+### Crear novedad (horas extra / valor)
+# @name novedad
+POST {{baseUrl}}/api/novedades-nomina
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vinculacionId": {{vinculacionId}},
+  "conceptoNominaId": {{conceptoId}},
+  "descripcion": "Bonificación",
+  "cantidadValor": 200000,
+  "fechaInicial": "2026-06-01",
+  "fechaFinal": "2026-06-30"
+}
+
+###
+@novedadId = {{novedad.response.body.$.data.id}}
+
+### Crear novedad de EMBARGO
+POST {{baseUrl}}/api/novedades-nomina
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "vinculacionId": {{vinculacionId}},
+  "conceptoNominaId": {{conceptoEmbargoId}},
+  "descripcion": "Embargo alimentos",
+  "cantidadValor": 500000,
+  "numeroCuota": 12,
+  "tipoEmbargo": "alimentos",
+  "expediente": "EXP-2026-001",
+  "demandante": "Juzgado 5 de Familia"
+}
+
+### Listar novedades de la vinculación
+POST {{baseUrl}}/api/novedades-nomina/list?vinculacionId={{vinculacionId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### Anular novedad
+POST {{baseUrl}}/api/novedades-nomina/{{novedadId}}/anular
+Authorization: Bearer {{token}}

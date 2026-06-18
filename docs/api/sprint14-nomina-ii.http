@@ -1,0 +1,83 @@
+### ============================================================================
+### Sprint 14 — Nómina II (HU-0020)
+###   liquidacion_nomina → liquidar (detalle + PILA append-only) → contabilizar (evento)
+###   Requiere datos del Sprint 13 (vinculaciones y novedades) y del Sprint 4 (cuentas, periodo contable).
+###   Ejecutar EN ORDEN.
+### ============================================================================
+
+@baseUrl = http://localhost:8081
+@rid = {{$timestamp}}
+
+### 0) Login
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin123" }
+
+###
+@token = {{login.response.body.$.data.accessToken}}
+
+### Concepto de sueldo (devengado) para la línea base — o reutiliza uno existente
+# @name conceptoSueldo
+POST {{baseUrl}}/api/conceptos-nomina
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "codigo": "SUELDO-{{rid}}", "nombre": "Sueldo básico", "frecuencia": "mensual", "clase": "devengado" }
+
+###
+@conceptoSueldoId = {{conceptoSueldo.response.body.$.data.id}}
+
+### 1) Crear liquidación (abierta)
+# @name liq
+POST {{baseUrl}}/api/liquidaciones-nomina
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "anio": 2026, "mes": 6, "periodo": "2026-06", "fecha": "2026-06-30" }
+
+###
+@liqId = {{liq.response.body.$.data.id}}
+
+### 2) Liquidar → genera detalle (sueldo + novedades) y PILA
+POST {{baseUrl}}/api/liquidaciones-nomina/{{liqId}}/liquidar
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "conceptoSueldoId": {{conceptoSueldoId}} }
+
+### 3) Ver detalle de la liquidación
+GET {{baseUrl}}/api/liquidaciones-nomina/{{liqId}}/detalle
+Authorization: Bearer {{token}}
+
+### 4) Ver aportes PILA
+GET {{baseUrl}}/api/liquidaciones-nomina/{{liqId}}/pila
+Authorization: Bearer {{token}}
+
+### 5) Contabilizar → publica el asiento (ajusta los ids de cuenta y periodo a los reales)
+POST {{baseUrl}}/api/liquidaciones-nomina/{{liqId}}/contabilizar
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "periodoContableId": 1,
+  "cuentaGastoId": 1,
+  "cuentaPorPagarId": 2,
+  "cuentaDeduccionesId": 3
+}
+
+### 6) Consultar la liquidación (estado debe ser 'contabilizado')
+GET {{baseUrl}}/api/liquidaciones-nomina/{{liqId}}
+Authorization: Bearer {{token}}
+
+### Listar liquidaciones
+POST {{baseUrl}}/api/liquidaciones-nomina/list
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "page": 0, "rows": 10 }
+
+### Anular (si aplica)
+# POST {{baseUrl}}/api/liquidaciones-nomina/{{liqId}}/anular
+# Authorization: Bearer {{token}}
